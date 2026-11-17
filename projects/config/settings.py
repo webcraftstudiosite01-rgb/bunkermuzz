@@ -28,6 +28,19 @@ ALLOWED_HOSTS = ['*'] if DEBUG else [
     if host.strip()
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.run.pinggy-free.link',
+    'https://*.free.pinggy.net',
+    'https://*.pinggy.link',
+    'https://*.pinggy.io',
+    'https://*.lhr.life',
+    'https://*.localhost.run',
+    'https://*.trycloudflare.com',
+    'https://*.serveo.net',
+    'http://127.0.0.1:5000',
+    'http://localhost:5000',
+]
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
