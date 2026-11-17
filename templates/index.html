@@ -1,0 +1,982 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Бункермуз — Ресторан • Арт-клуб • Лаундж-бар • Караоке в Тернополі{% endblock %}
+
+{% block content %}
+<!-- ============================================== -->
+<!-- 1. HERO SECTION -->
+<!-- ============================================== -->
+<section class="hero-bunker">
+    <canvas id="ambientEmbersCanvas" class="ambient-canvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <div class="hero-badge-tag">
+            <span class="live-pulse"></span>
+            <span>ІСТОРИЧНІ СКЛЕПІННЯ XVII СТ. &middot; БУЛЬВ. ТАРАСА ШЕВЧЕНКА, 1 &middot; ТЕРНОПІЛЬ</span>
+        </div>
+
+        <h1 class="hero-glitch-title">
+            БУНКЕР<span class="text-gold">МУЗ</span>
+        </h1>
+
+        <p class="hero-subtext">
+            Культовий гастрономічний простір Тернополя: авторська кухня, преміальні сети суші, соковиті бургери, авторський бар та живий звук під автентичними арками.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="hero-cta-group">
+            <button type="button" class="btn btn-gold btn-lg" onclick="openAndScrollToMenu()">
+                <span>Переглянути меню</span>
+            </button>
+            <button type="button" class="btn btn-outline btn-lg" onclick="openReservationModal()">
+                <span>Забронювати стіл</span>
+            </button>
+            <a href="#eventsSection" class="btn btn-glass btn-lg hide-mobile">
+                <span>Афіша подій</span>
+            </a>
+        </div>
+
+        <!-- Quick Stats / USP Badges -->
+        <div class="hero-stats-row">
+            <div class="stat-pill">
+                <span class="stat-num">4.8</span>
+                <span class="stat-lbl">Рейтинг Google</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-num">~35 хв</span>
+                <span class="stat-lbl">Швидка доставка</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-num">65+</span>
+                <span class="stat-lbl">Авторських позицій</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-num">Чт–Нд 16:00–23:00</span>
+                <span class="stat-lbl">Робочий час закладу</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- ============================================== -->
+
+<!-- ============================================== -->
+<!-- 2. POPULAR DISHES TICKER / HIGHLIGHTS -->
+<!-- ============================================== -->
+{% if popular_items %}
+<section class="popular-slider-section">
+    <div class="container">
+        <div class="section-title-wrap">
+            <div class="badge-mini">ТОП ВИБІР ГОСТЕЙ</div>
+            <h2 class="section-heading">Хіти Бункермуз</h2>
+            <p class="section-desc">Страви, заради яких повертаються знову і знову</p>
+        </div>
+
+        <div class="popular-scroll-grid">
+            {% for item in popular_items %}
+            <div class="dish-card highlight-card" data-id="{{ item.id }}" data-category="{{ item.category.slug }}">
+                <div class="dish-img-wrap" onclick="openQuickView({{ item.id }})">
+                    {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy" class="dish-img">
+                    {% else %}
+                    <div class="dish-placeholder">🍱</div>
+                    {% endif %}
+                    
+                    <div class="dish-badges">
+                        <span class="badge-hit">ХІТ</span>
+                        {% if item.is_new %}
+                        <span class="badge-new">НОВИНКА</span>
+                        {% endif %}
+                        {% if item.is_spicy %}
+                        <span class="badge-spicy">ГОСТРЕ</span>
+                        {% endif %}
+                    </div>
+                    <span class="view-overlay-hint">Швидкий перегляд</span>
+                </div>
+
+                <div class="dish-content">
+                    <div class="dish-top-meta">
+                        <span class="dish-cat-name">{{ item.category.name }}</span>
+                        {% if item.weight %}
+                        <span class="dish-weight">{{ item.weight }}</span>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="dish-title" onclick="openQuickView({{ item.id }})">{{ item.title }}</h3>
+                    <p class="dish-desc">{{ item.description|truncatechars:90 }}</p>
+
+                    <div class="dish-footer">
+                        <div class="price-box">
+                            <span class="price-val">{{ item.price|floatformat:0 }} ₴</span>
+                            {% if item.old_price %}
+                            <span class="old-price">{{ item.old_price|floatformat:0 }} ₴</span>
+                            {% endif %}
+                        </div>
+
+                        <button type="button" class="btn-add-cart" 
+                                onclick="addToCart('{{ item.id }}', '{{ item.title|escapejs }}', '{{ item.price|stringformat:".2f" }}', '{{ item.image_url|escapejs }}', '{{ item.weight|escapejs }}', 1)">
+                            <span class="btn-icon">+</span>
+                            <span>В кошик</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- ============================================== -->
+{% endif %}
+
+<!-- ============================================== -->
+<!-- 2.4 CHEF'S GASTRONOMIC PAIRING GUIDE -->
+<!-- ============================================== -->
+<section class="pairing-guide-section" id="pairingGuideSection">
+    <div class="container">
+        <div class="section-title-wrap">
+            <div class="badge-mini">ГАСТРОНОМІЧНИЙ ГІД ВІД ШЕФА & СОМЕЛЬЄ</div>
+            <h2 class="section-heading">Ідеальні поєднання за вашим настроєм</h2>
+            <p class="section-desc">Оберіть вайб свого вечора — наш шеф-кухар та шеф-бартендер поєднали авторські страви та ідеальні напої в ексклюзивні сети зі знижкою 10%</p>
+        </div>
+
+        <!-- Mood Selector Bar -->
+        <div class="pairing-mood-tabs" id="pairingMoodTabs">
+            <button type="button" class="pairing-mood-btn active" data-mood="romance" onclick="selectPairingMood('romance')">
+                <span class="pm-emoji">🕯️</span>
+                <span class="pm-text-wrap">
+                    <span class="pm-title">Романтична вечеря</span>
+                    <span class="pm-hint">Тар-тар & Pornstar Martini</span>
+                </span>
+            </button>
+            <button type="button" class="pairing-mood-btn" data-mood="meat" onclick="selectPairingMood('meat')">
+                <span class="pm-emoji">🥩</span>
+                <span class="pm-text-wrap">
+                    <span class="pm-title">М'ясний вечір & Віскі</span>
+                    <span class="pm-hint">Свинина на пательні & Whiskey Sour</span>
+                </span>
+            </button>
+            <button type="button" class="pairing-mood-btn" data-mood="speakeasy" onclick="selectPairingMood('speakeasy')">
+                <span class="pm-emoji">🍸</span>
+                <span class="pm-text-wrap">
+                    <span class="pm-title">Димний Speakeasy Lounge</span>
+                    <span class="pm-hint">Лосось у сирі & Smoked Negroni</span>
+                </span>
+            </button>
+            <button type="button" class="pairing-mood-btn" data-mood="friends" onclick="selectPairingMood('friends')">
+                <span class="pm-emoji">🥂</span>
+                <span class="pm-text-wrap">
+                    <span class="pm-title">Гучна компанія друзів</span>
+                    <span class="pm-hint">Крафтовий бургер, батат & IPA</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- Dynamic Pairing Card Display -->
+        <div class="pairing-card-wrap" id="pairingCardWrap">
+            <div class="pairing-card">
+                <div class="pc-visual">
+                    <div class="pc-img-duo">
+                        <img src="https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=700&q=80" alt="Тар-тар з лосося" class="pc-img-primary">
+                        <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=500&q=80" alt="Pornstar Passion Martini" class="pc-img-secondary">
+                    </div>
+                    <div class="pc-badge-discount">-10% НА СЕТ</div>
+                </div>
+
+                <div class="pc-info">
+                    <div class="pc-vibe-tag">🕯️ ІДЕАЛЬНО ДЛЯ ДВОХ &middot; РОМАНТИЧНА ВЕЧЕРЯ</div>
+                    <h3 class="pc-title" id="pcTitle">Сет «L'Amour Speakeasy»: Тар-тар з лосося & Pornstar Passion Martini</h3>
+                    <p class="pc-desc" id="pcDesc">
+                        Ніжний тартар зі свіжого норвезького лосося з авокадо та соусом понзу в гармонійному поєднанні з яскравим авторським коктейлем на основі маракуї, ванілі та подачею з шотом ігристого вина.
+                    </p>
+
+                    <div class="pc-items-list" id="pcItemsList">
+                        <div class="pc-item-row">
+                            <span class="item-dot">✦</span>
+                            <span class="item-name"><strong>Тар-тар з лосося</strong> (220 г) — свіжий лосось, стиглий авокадо, цибуля шалот, каперси, мікрозелень</span>
+                            <span class="item-single-price">390 ₴</span>
+                        </div>
+                        <div class="pc-item-row">
+                            <span class="item-dot">✦</span>
+                            <span class="item-name"><strong>Pornstar Passion Martini</strong> (180 мл) — ванільна горілка, пюре маракуї, лайм, келих ігристого Brut</span>
+                            <span class="item-single-price">270 ₴</span>
+                        </div>
+                    </div>
+
+                    <div class="pc-sommelier-quote">
+                        <span class="sq-icon">💬</span>
+                        <p class="sq-text"><strong>Порада сомельє:</strong> Кисло-солодкий тропічний профіль маракуї бездоганно освіжає рецептори та підкреслює багату текстуру норвезького лосося.</p>
+                    </div>
+
+                    <div class="pc-footer-row">
+                        <div class="pc-price-block">
+                            <span class="pc-old-price" id="pcOldPrice">660 ₴</span>
+                            <span class="pc-new-price" id="pcNewPrice">590 ₴</span>
+                            <span class="pc-economy">Ваша вигода 70 ₴</span>
+                        </div>
+
+                        <div class="pc-actions">
+                            <button type="button" class="btn btn-gold btn-lg btn-add-set" id="btnAddSetToCart" onclick="addCurrentSetToCart()">
+                                <span class="btn-icon">🛒</span>
+                                <span>Замовити цей гастро-сет</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- ============================================== -->
+
+<!-- ============================================== -->
+<!-- 2.5 MENU TEASER & EXPAND TRIGGER -->
+<!-- ============================================== -->
+<section class="menu-teaser-section">
+    <div class="container">
+        <div class="menu-teaser-card">
+            <div class="teaser-glow"></div>
+            <div class="teaser-content">
+                <div class="badge-mini">ГАСТРОНОМІЧНИЙ КАТАЛОГ</div>
+                <h3 class="teaser-title">Повне авторське меню закладу</h3>
+                <p class="teaser-desc">11 категорій &middot; 66 страв &middot; Преміальні сети суші, соковиті бургери, паста, стейки, авторський бар та кальяни</p>
+                <div class="teaser-action-row">
+                    <button type="button" class="btn btn-gold btn-lg btn-toggle-menu" id="btnToggleMenu" onclick="toggleFullMenu()">
+                        <span id="btnToggleMenuText">Відкрити повне меню (66 страв)</span>
+                        <span id="btnToggleMenuIcon" class="toggle-icon">↓</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- ============================================== -->
+
+<!-- ============================================== -->
+<!-- 3. INTERACTIVE ONLINE MENU SECTION (COLLAPSIBLE) -->
+<!-- ============================================== -->
+<section class="menu-main-section menu-collapsed" id="menuSection">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="section-title-wrap">
+            <div class="badge-mini">ОНЛАЙН МЕНЮ & ДОСТАВКА</div>
+            <h2 class="section-heading">Гастрономічне Меню</h2>
+            <p class="section-desc">Обирайте улюблені страви з доставкою до дверей або самовивозом зі знижкою 10%</p>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="menu-controls-box">
+            <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="menuSearchInput" placeholder="Пошук страви або інгредієнта (напр. лосось, креветка, бургер...)" oninput="filterMenuItems()">
+                <button type="button" id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()">&times;</button>
+            </div>
+
+            <div class="filter-chips-row">
+                <button type="button" class="chip-btn active" data-filter="all" onclick="setQuickFilter('all')">
+                    Всі позиції
+                </button>
+                <button type="button" class="chip-btn" data-filter="hit" onclick="setQuickFilter('hit')">
+                    Хіти закладу
+                </button>
+                <button type="button" class="chip-btn" data-filter="new" onclick="setQuickFilter('new')">
+                    Новинки
+                </button>
+                <button type="button" class="chip-btn" data-filter="spicy" onclick="setQuickFilter('spicy')">
+                    Гострі страви
+                </button>
+                <button type="button" class="chip-btn" data-filter="sushi" onclick="scrollToCategory('sushi-sets')">
+                    Сети та роли
+                </button>
+                <button type="button" class="chip-btn" data-filter="burgers" onclick="scrollToCategory('burgers')">
+                    Бургери
+                </button>
+                <button type="button" class="chip-btn" data-filter="bar" onclick="scrollToCategory('bar-cocktails')">
+                    Коктейльний бар
+                </button>
+            </div>
+        </div>
+
+        <!-- Sticky Categories Bar -->
+        <nav class="categories-sticky-bar" id="categoryNav">
+            <div class="categories-scroll-wrap">
+                {% for category in categories %}
+                <button type="button" class="cat-nav-btn {% if forloop.first %}active{% endif %}" 
+                        data-target="{{ category.slug }}" 
+                        onclick="scrollToCategory('{{ category.slug }}')">
+                    <span class="cat-icon">{{ category.icon }}</span>
+                    <span class="cat-label">{{ category.name }}</span>
+                    <span class="cat-count">{{ category.items.count }}</span>
+                </button>
+                {% endfor %}
+            </div>
+        </nav>
+
+        <!-- Categories & Dishes Container -->
+        <div class="menu-catalog-container" id="menuCatalog">
+            {% for category in categories %}
+            <div class="category-block" id="cat-{{ category.slug }}" data-cat-slug="{{ category.slug }}">
+                <div class="category-header">
+                    <div class="cat-header-title">
+                        <span class="cat-header-icon">{{ category.icon }}</span>
+                        <h2>{{ category.name }}</h2>
+                    </div>
+                    <span class="cat-items-badge">{{ category.items.count }} страв</span>
+                </div>
+
+                <div class="dishes-grid">
+                    {% for item in category.items.all %}
+                    <div class="dish-card" 
+                         id="dishCard-{{ item.id }}"
+                         data-id="{{ item.id }}" 
+                         data-title="{{ item.title|lower }}" 
+                         data-desc="{{ item.description|lower }}"
+                         data-cat="{{ category.slug }}"
+                         data-price="{{ item.price }}"
+                         data-is-hit="{% if item.is_popular %}true{% else %}false{% endif %}"
+                         data-is-new="{% if item.is_new %}true{% else %}false{% endif %}"
+                         data-is-spicy="{% if item.is_spicy %}true{% else %}false{% endif %}">
+                        
+                        <div class="dish-img-wrap" onclick="openQuickView({{ item.id }})">
+                            {% if item.image_url %}
+                            <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy" class="dish-img">
+                            {% else %}
+                            <div class="dish-placeholder">{{ category.icon }}</div>
+                            {% endif %}
+
+                            <div class="dish-badges">
+                                {% if item.is_popular %}
+                                <span class="badge-hit">ХІТ</span>
+                                {% endif %}
+                                {% if item.is_new %}
+                                <span class="badge-new">НОВИНКА</span>
+                                {% endif %}
+                                {% if item.is_spicy %}
+                                <span class="badge-spicy">ГОСТРЕ</span>
+                                {% endif %}
+                            </div>
+                            <span class="view-overlay-hint">Деталі страви</span>
+                        </div>
+
+                        <div class="dish-content">
+                            <div class="dish-top-meta">
+                                <span class="dish-cat-name">{{ category.name }}</span>
+                                {% if item.weight %}
+                                <span class="dish-weight">{{ item.weight }}</span>
+                                {% endif %}
+                            </div>
+
+                            <h3 class="dish-title" onclick="openQuickView({{ item.id }})">{{ item.title }}</h3>
+                            <p class="dish-desc">{{ item.description }}</p>
+
+                            <div class="dish-footer">
+                                <div class="price-box">
+                                    <span class="price-val">{{ item.price|floatformat:0 }} ₴</span>
+                                    {% if item.old_price %}
+                                    <span class="old-price">{{ item.old_price|floatformat:0 }} ₴</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="dish-actions">
+                                    <button type="button" class="btn-add-cart" 
+                                            onclick="addToCart('{{ item.id }}', '{{ item.title|escapejs }}', '{{ item.price|stringformat:".2f" }}', '{{ item.image_url|escapejs }}', '{{ item.weight|escapejs }}', 1)">
+                                        <span class="btn-icon">+</span>
+                                        <span>В кошик</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div id="noResultsBlock" class="no-results-box" style="display: none;">
+            <span class="no-res-icon">🔍</span>
+            <h3>Нічого не знайдено</h3>
+            <p>Спробуйте змінити запит пошуку або очистіть фільтри.</p>
+            <button type="button" class="btn btn-outline" onclick="clearSearch()">Скинути пошук</button>
+        </div>
+
+        <!-- Bottom Collapse Menu Button -->
+        <div class="menu-collapse-bottom-wrap">
+            <button type="button" class="btn btn-outline btn-collapse-bottom" onclick="toggleFullMenu(false)">
+                <span>↑ Згорнути каталог меню</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- ============================================== -->
+
+<!-- ============================================== -->
+<!-- 3.5 INTERACTIVE ZONES & SPACES EXPLORER -->
+<!-- ============================================== -->
+<section class="zones-interactive-section" id="zonesSection">
+    <div class="container">
+        <div class="section-title-wrap">
+            <div class="badge-mini">АРХІТЕКТУРА & ПРОСТІР</div>
+            <h2 class="section-heading">Зали та Зони Бункермуз</h2>
+            <p class="section-desc">Оберіть локацію під свій настрій — від камерної вечері при свічках до запального караоке</p>
+        </div>
+
+        <!-- Zone Tabs Switcher -->
+        <div class="zone-tabs-nav" id="zoneTabsNav">
+            <button type="button" class="zone-tab-btn active" data-zone="main_vault" onclick="switchZone('main_vault')">
+                <span class="z-icon">🏛️</span>
+                <span class="z-label">Зал склепінь XVII ст.</span>
+            </button>
+            <button type="button" class="zone-tab-btn" data-zone="speakeasy_bar" onclick="switchZone('speakeasy_bar')">
+                <span class="z-icon">🍸</span>
+                <span class="z-label">Speakeasy Бар</span>
+            </button>
+            <button type="button" class="zone-tab-btn" data-zone="vip_lounge" onclick="switchZone('vip_lounge')">
+                <span class="z-icon">🛋️</span>
+                <span class="z-label">VIP & Cigar Lounge</span>
+            </button>
+            <button type="button" class="zone-tab-btn" data-zone="karaoke" onclick="switchZone('karaoke')">
+                <span class="z-icon">🎤</span>
+                <span class="z-label">Караоке Evolution</span>
+            </button>
+            <button type="button" class="zone-tab-btn" data-zone="art_patio" onclick="switchZone('art_patio')">
+                <span class="z-icon">🌿</span>
+                <span class="z-label">Літній Арт-Дворик</span>
+            </button>
+        </div>
+
+        <!-- Active Zone Showcase Display -->
+        <div class="zone-showcase-card" id="zoneShowcaseCard">
+            <div class="zone-img-wrapper">
+                <img id="zoneHeroImage" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80" alt="Зал склепінь XVII століття Бункермуз">
+                <div class="zone-badge-overlay" id="zoneCapacityBadge">
+                    👥 До 85 гостей &middot; Банкетний формат
+                </div>
+            </div>
+
+            <div class="zone-content-wrapper">
+                <div class="zone-tag-line" id="zoneTagLine">АВТЕНТИЧНА ІСТОРІЯ</div>
+                <h3 class="zone-title" id="zoneTitle">Головний зал склепінь XVII століття</h3>
+                <p class="zone-description" id="zoneDesc">
+                    Серце закладу під багатовіковими цегляними арками. Унікальна природна акустика, тепле приглушене світло ламп Edison та жива музика створюють атмосферу, якої немає більше ніде в західній Україні.
+                </p>
+
+                <div class="zone-features-grid" id="zoneFeaturesGrid">
+                    <div class="zf-chip"><span class="zf-bullet">✦</span> Автентична цегла 1600-х</div>
+                    <div class="zf-chip"><span class="zf-bullet">✦</span> Сцена для живих виступів</div>
+                    <div class="zf-chip"><span class="zf-bullet">✦</span> Винна колекція Sommelier</div>
+                    <div class="zf-chip"><span class="zf-bullet">✦</span> Комфортні м'які дивани</div>
+                </div>
+
+                <div class="zone-action-row">
+                    <button type="button" class="btn btn-gold btn-lg" id="btnBookThisZone" onclick="openReservationWithZone('main')">
+                        🥂 Забронювати цю зону
+                    </button>
+                    <span class="zone-subnote">Бронювання безкоштовне &middot; Підтвердження за 3 хвилини</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- 3.6 INTERACTIVE ARCHITECTURAL FLOOR PLAN & SEATING -->
+<!-- ============================================== -->
+<section class="floorplan-section" id="floorPlanSection">
+    <div class="container">
+        <div class="section-title-wrap">
+            <div class="badge-mini">ІНТЕРАКТИВНА СХЕМА ЗАЛУ ТА СТОЛИКІВ</div>
+            <h2 class="section-heading">Оберіть свій столик на мапі підземелля</h2>
+            <p class="section-desc">Натисніть на столик на схемі, щоб побачити огляд, місткість та зарезервувати саме його</p>
+        </div>
+
+        <!-- Filter Pills for Halls -->
+        <div class="fp-hall-pills" id="fpFilterPills">
+            <button type="button" class="fp-pill active" data-filter="all" onclick="filterFloorTables('all')">
+                <span>Усі столики (10 зон)</span>
+            </button>
+            <button type="button" class="fp-pill" data-filter="vault" onclick="filterFloorTables('vault')">
+                <span>🏛️ Зал склепінь XVII ст.</span>
+            </button>
+            <button type="button" class="fp-pill" data-filter="stage" onclick="filterFloorTables('stage')">
+                <span>🎷 Джаз-сцена & Speakeasy</span>
+            </button>
+            <button type="button" class="fp-pill" data-filter="vip" onclick="filterFloorTables('vip')">
+                <span>👑 VIP-Кабінети</span>
+            </button>
+            <button type="button" class="fp-pill" data-filter="bar" onclick="filterFloorTables('bar')">
+                <span>🍸 Контактний бар</span>
+            </button>
+        </div>
+
+        <!-- Grid: Interactive Blueprint Schematic + Live Inspector Card -->
+        <div class="fp-main-grid">
+            <!-- Left: Architectural Schematic SVG Blueprint Container -->
+            <div class="fp-map-card">
+                <div class="fp-map-topbar">
+                    <div class="fp-meta-tag">
+                        <span class="live-dot-pulse"></span>
+                        <span class="fp-level-text">РІВЕНЬ -1 &middot; АВТЕНТИЧНЕ ПІДЗЕМЕЛЛЯ XVII СТ.</span>
+                    </div>
+                    <div class="fp-legend-row">
+                        <span class="legend-badge leg-free"><span class="dot"></span> Вільний</span>
+                        <span class="legend-badge leg-vip"><span class="dot"></span> VIP / Депозит</span>
+                        <span class="legend-badge leg-active"><span class="dot"></span> Обраний вами</span>
+                    </div>
+                </div>
+
+                <div class="fp-blueprint-canvas">
+                    <!-- Floorplan SVG with arches, stage, bar and clickable table nodes -->
+                    <svg viewBox="0 0 880 500" class="fp-svg" id="fpSvgMap" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="archGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(212, 175, 55, 0.05)" stroke-width="1"/>
+                            </pattern>
+                            <radialGradient id="stageGlow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="rgba(212, 175, 55, 0.22)"/>
+                                <stop offset="100%" stop-color="rgba(212, 175, 55, 0)"/>
+                            </radialGradient>
+                        </defs>
+
+                        <!-- Background architectural grid -->
+                        <rect width="880" height="500" fill="#0C1018" rx="16"/>
+                        <rect width="880" height="500" fill="url(#archGrid)" rx="16"/>
+                        <rect x="6" y="6" width="868" height="488" fill="none" stroke="rgba(212, 175, 55, 0.16)" stroke-width="1.5" stroke-dasharray="6,4" rx="12"/>
+
+                        <!-- Structural Arches / Historical Vaults overlay -->
+                        <path d="M 30 250 Q 220 160 410 250 Q 620 160 850 250" fill="none" stroke="rgba(212, 175, 55, 0.12)" stroke-width="2"/>
+                        <path d="M 30 40 Q 220 120 410 40 Q 620 120 850 40" fill="none" stroke="rgba(212, 175, 55, 0.08)" stroke-width="1.5"/>
+
+                        <!-- Zone 1: Main Vault Hall (Left) -->
+                        <rect x="30" y="30" width="370" height="440" rx="10" fill="rgba(20, 26, 38, 0.6)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+                        <text x="50" y="58" fill="#94A3B8" font-family="'Montserrat', sans-serif" font-size="11" font-weight="700" letter-spacing="2">ГОЛОВНИЙ ЗАЛ СКЛЕПІНЬ</text>
+                        <path d="M 50 66 L 220 66" stroke="rgba(212, 175, 55, 0.3)" stroke-width="1"/>
+
+                        <!-- Stone Fireplace Decor (Камін) -->
+                        <rect x="42" y="210" width="16" height="80" rx="4" fill="#1C2333" stroke="#D4AF37" stroke-width="1"/>
+                        <text x="34" y="260" fill="#D4AF37" font-family="'Montserrat', sans-serif" font-size="9" transform="rotate(-90 34 260)" letter-spacing="1">🔥 КАМІН</text>
+
+                        <!-- Table 1 -->
+                        <g class="map-table-node active" id="node-t1" onclick="selectFloorTable('t1')" data-zone="vault">
+                            <rect x="90" y="95" width="76" height="52" rx="8" class="tbl-shape"/>
+                            <circle cx="76" cy="121" r="6" class="chair"/>
+                            <circle cx="180" cy="121" r="6" class="chair"/>
+                            <circle cx="128" cy="81" r="6" class="chair"/>
+                            <circle cx="128" cy="161" r="6" class="chair"/>
+                            <text x="128" y="123" class="tbl-text" text-anchor="middle" dominant-baseline="middle">#1</text>
+                            <text x="128" y="137" class="tbl-subtext" text-anchor="middle">4-6 місць</text>
+                        </g>
+
+                        <!-- Table 2 -->
+                        <g class="map-table-node" id="node-t2" onclick="selectFloorTable('t2')" data-zone="vault">
+                            <rect x="230" y="95" width="76" height="52" rx="8" class="tbl-shape"/>
+                            <circle cx="216" cy="121" r="6" class="chair"/>
+                            <circle cx="320" cy="121" r="6" class="chair"/>
+                            <circle cx="268" cy="81" r="6" class="chair"/>
+                            <circle cx="268" cy="161" r="6" class="chair"/>
+                            <text x="268" y="123" class="tbl-text" text-anchor="middle" dominant-baseline="middle">#2</text>
+                            <text x="268" y="137" class="tbl-subtext" text-anchor="middle">2-4 місця</text>
+                        </g>
+
+                        <!-- Table 3 -->
+                        <g class="map-table-node" id="node-t3" onclick="selectFloorTable('t3')" data-zone="vault">
+                            <rect x="90" y="235" width="76" height="52" rx="8" class="tbl-shape"/>
+                            <circle cx="76" cy="261" r="6" class="chair"/>
+                            <circle cx="180" cy="261" r="6" class="chair"/>
+                            <circle cx="128" cy="221" r="6" class="chair"/>
+                            <circle cx="128" cy="301" r="6" class="chair"/>
+                            <text x="128" y="263" class="tbl-text" text-anchor="middle" dominant-baseline="middle">#3</text>
+                            <text x="128" y="277" class="tbl-subtext" text-anchor="middle">4 місця</text>
+                        </g>
+
+                        <!-- Table 4 (Romantic Niche) -->
+                        <g class="map-table-node" id="node-t4" onclick="selectFloorTable('t4')" data-zone="vault">
+                            <circle cx="268" cy="261" r="32" class="tbl-shape round"/>
+                            <circle cx="230" cy="261" r="6" class="chair"/>
+                            <circle cx="306" cy="261" r="6" class="chair"/>
+                            <text x="268" y="258" class="tbl-text" text-anchor="middle" dominant-baseline="middle">#4</text>
+                            <text x="268" y="273" class="tbl-subtext" text-anchor="middle">2 місця</text>
+                        </g>
+
+                        <!-- Wine Cellar Glass Display -->
+                        <rect x="75" y="375" width="250" height="35" rx="6" fill="#151C28" stroke="rgba(212, 175, 55, 0.25)" stroke-width="1"/>
+                        <text x="200" y="397" fill="#E8CF7A" font-family="'Montserrat', sans-serif" font-size="10" font-weight="600" text-anchor="middle" letter-spacing="1">🍷 ВИННА ГАЛЕРЕЯ SOMMELIER (350+ ПЛЯШОК)</text>
+
+                        <!-- Zone 2: Jazz Stage & Speakeasy Bar (Center-Right) -->
+                        <rect x="420" y="30" width="430" height="250" rx="10" fill="rgba(20, 26, 38, 0.6)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+                        <text x="440" y="58" fill="#94A3B8" font-family="'Montserrat', sans-serif" font-size="11" font-weight="700" letter-spacing="2">ДЖАЗ-СЦЕНА & SPEAKEASY БАР</text>
+                        <path d="M 440 66 L 650 66" stroke="rgba(212, 175, 55, 0.3)" stroke-width="1"/>
+
+                        <!-- The Stage -->
+                        <rect x="710" y="75" width="125" height="70" rx="8" fill="url(#stageGlow)" stroke="#D4AF37" stroke-width="1.5"/>
+                        <text x="772" y="108" fill="#F8FAFC" font-family="'Montserrat', sans-serif" font-size="11" font-weight="700" text-anchor="middle">🎷 СЦЕНА</text>
+                        <text x="772" y="123" fill="#E8CF7A" font-family="'Manrope', sans-serif" font-size="9" text-anchor="middle">Live Jazz & Blues</text>
+
+                        <!-- Table 5 (Front of stage) -->
+                        <g class="map-table-node" id="node-t5" onclick="selectFloorTable('t5')" data-zone="stage">
+                            <rect x="580" y="84" width="76" height="52" rx="8" class="tbl-shape"/>
+                            <circle cx="566" cy="110" r="6" class="chair"/>
+                            <circle cx="670" cy="110" r="6" class="chair"/>
+                            <circle cx="618" cy="70" r="6" class="chair"/>
+                            <circle cx="618" cy="150" r="6" class="chair"/>
+                            <text x="618" y="112" class="tbl-text" text-anchor="middle" dominant-baseline="middle">#5</text>
+                            <text x="618" y="126" class="tbl-subtext" text-anchor="middle">2-4 місця</text>
+                        </g>
+
+                        <!-- Table 6 (Stage Lodge) -->
+                        <g class="map-table-node" id="node-t6" onclick="selectFloorTable('t6')" data-zone="stage">
+                            <rect x="460" y="84" width="80" height="52" rx="8" class="tbl-shape"/>
+                            <circle cx="446" cy="110" r="6" class="chair"/>
+                            <circle cx="554" cy="110" r="6" class="chair"/>
+                            <circle cx="500" cy="70" r="6" class="chair"/>
+                            <circle cx="500" cy="150" r="6" class="chair"/>
+                            <text x="500" y="112" class="tbl-text" text-anchor="middle" dominant-baseline="middle">#6</text>
+                            <text x="500" y="126" class="tbl-subtext" text-anchor="middle">4-6 місць</text>
+                        </g>
+
+                        <!-- Speakeasy Bar Counter -->
+                        <g class="map-table-node" id="node-tbar" onclick="selectFloorTable('tbar')" data-zone="bar">
+                            <path d="M 460 190 L 760 190 Q 775 190 775 205 L 775 230 Q 775 240 760 240 L 460 240 Z" class="tbl-shape bar-counter"/>
+                            <circle cx="490" cy="256" r="6" class="chair bar-stool"/>
+                            <circle cx="550" cy="256" r="6" class="chair bar-stool"/>
+                            <circle cx="610" cy="256" r="6" class="chair bar-stool"/>
+                            <circle cx="670" cy="256" r="6" class="chair bar-stool"/>
+                            <circle cx="730" cy="256" r="6" class="chair bar-stool"/>
+                            <text x="610" y="217" class="tbl-text" text-anchor="middle" dominant-baseline="middle">🍸 КОНТАКТНИЙ SPEAKEASY БАР (B1-B5)</text>
+                        </g>
+
+                        <!-- Zone 3: VIP Lounge & Wine Room (Bottom-Right) -->
+                        <rect x="420" y="300" width="430" height="170" rx="10" fill="rgba(20, 26, 38, 0.6)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+                        <text x="440" y="328" fill="#94A3B8" font-family="'Montserrat', sans-serif" font-size="11" font-weight="700" letter-spacing="2">VIP LOUNGE & CIGAR ROOM</text>
+                        <path d="M 440 336 L 630 336" stroke="rgba(212, 175, 55, 0.3)" stroke-width="1"/>
+
+                        <!-- VIP 1: Панський Кабінет -->
+                        <g class="map-table-node vip-node" id="node-tvip1" onclick="selectFloorTable('tvip1')" data-zone="vip">
+                            <rect x="445" y="355" width="175" height="95" rx="10" class="tbl-shape vip-shape"/>
+                            <rect x="435" y="365" width="7" height="75" rx="3" fill="#D4AF37"/>
+                            <rect x="623" y="365" width="7" height="75" rx="3" fill="#D4AF37"/>
+                            <rect x="480" y="453" width="105" height="7" rx="3" fill="#D4AF37"/>
+                            <text x="532" y="395" class="tbl-text vip-gold" text-anchor="middle" dominant-baseline="middle">👑 VIP-1 «ПАНСЬКИЙ»</text>
+                            <text x="532" y="415" class="tbl-subtext" text-anchor="middle">6-10 гостей &middot; Закрита ложа</text>
+                        </g>
+
+                        <!-- VIP 2: Винний Погріб -->
+                        <g class="map-table-node vip-node" id="node-tvip2" onclick="selectFloorTable('tvip2')" data-zone="vip">
+                            <rect x="655" y="355" width="175" height="95" rx="10" class="tbl-shape vip-shape"/>
+                            <circle cx="742" cy="402" r="28" class="tbl-shape round inner"/>
+                            <circle cx="698" cy="402" r="6" class="chair"/>
+                            <circle cx="786" cy="402" r="6" class="chair"/>
+                            <circle cx="742" cy="358" r="6" class="chair"/>
+                            <circle cx="742" cy="446" r="6" class="chair"/>
+                            <text x="742" y="396" class="tbl-text vip-gold" text-anchor="middle" dominant-baseline="middle">🍷 VIP-2 «ВИННИЙ»</text>
+                            <text x="742" y="416" class="tbl-subtext" text-anchor="middle">4-8 гостей &middot; Дегустаційна</text>
+                        </g>
+                    </svg>
+                </div>
+                <div class="fp-hint-footer">
+                    <span>💡 <em>Підказка:</em> Клацніть на будь-який стіл на схемі, щоб побачити опис та зафіксувати його за собою.</span>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Table Inspector & Action Box -->
+            <div class="fp-inspector-card" id="fpInspectorCard">
+                <div class="fpi-header">
+                    <span class="fpi-tag" id="fpiZoneTag">🏛️ ГОЛОВНИЙ ЗАЛ СКЛЕПІНЬ</span>
+                    <span class="fpi-status-badge free" id="fpiStatusBadge">🟢 Вільний на сьогодні</span>
+                </div>
+
+                <div class="fpi-img-wrap">
+                    <img id="fpiImage" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" alt="Стіл #1">
+                    <div class="fpi-number-badge" id="fpiNumberBadge">Стіл #1</div>
+                </div>
+
+                <div class="fpi-body">
+                    <h3 class="fpi-title" id="fpiTitle">Стіл #1 біля каміна</h3>
+                    <p class="fpi-desc" id="fpiDesc">
+                        Затишний стіл під автентичними арками XVII століття поруч із декоративним цегляним каміном. Тепле вечірнє світло, м'які оксамитові крісла та ідеальна атмосфера для неквапливої вечері.
+                    </p>
+
+                    <div class="fpi-specs-grid">
+                        <div class="fpi-spec-item">
+                            <span class="spec-label">Місткість</span>
+                            <strong class="spec-val" id="fpiCapacity">4-6 гостей</strong>
+                        </div>
+                        <div class="fpi-spec-item">
+                            <span class="spec-label">Розташування</span>
+                            <strong class="spec-val" id="fpiLocation">Біля каміна</strong>
+                        </div>
+                        <div class="fpi-spec-item">
+                            <span class="spec-label">Депозит</span>
+                            <strong class="spec-val" id="fpiDeposit">Без депозиту</strong>
+                        </div>
+                        <div class="fpi-spec-item">
+                            <span class="spec-label">Акустика / Вайб</span>
+                            <strong class="spec-val" id="fpiVibe">Камерний, спокійний</strong>
+                        </div>
+                    </div>
+
+                    <div class="fpi-action-box">
+                        <button type="button" class="btn btn-gold btn-block btn-lg" id="btnBookSelectedTable" onclick="bookSelectedFloorTable()">
+                            <span>🥂 Забронювати стіл #1</span>
+                        </button>
+                        <span class="fpi-guarantee-note">✓ Ми закріпимо саме цей стіл за вашим номером</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- 4. EVENTS & POSTER (АФІША АРТ-КЛУБУ) -->
+<!-- ============================================== -->
+{% if events %}
+<section class="events-main-section" id="eventsSection">
+    <div class="container">
+        <div class="section-title-wrap">
+            <div class="badge-mini">АРТ-КЛУБ ТА ПОДІЇ</div>
+            <h2 class="section-heading">Афіша Бункермуз</h2>
+            <p class="section-desc">Живий звук, вечірки, стендап та незабутня атмосфера щотижня</p>
+        </div>
+
+        <div class="events-grid">
+            {% for event in events %}
+            <div class="event-card">
+                <div class="event-img-wrap">
+                    {% if event.image_url %}
+                    <img src="{{ event.image_url }}" alt="{{ event.title }}" loading="lazy">
+                    {% endif %}
+                    <span class="event-tag-badge">{{ event.badge }}</span>
+                </div>
+                <div class="event-body">
+                    <div class="event-date-row">
+                        <span class="event-icon">📅</span>
+                        <strong class="event-date-text">{{ event.date_time|date:"d E (l)" }}, {{ event.date_time|date:"H:i" }}</strong>
+                    </div>
+                    <h3 class="event-title">{{ event.title }}</h3>
+                    <p class="event-desc">{{ event.description }}</p>
+                    <div class="event-footer">
+                        <div class="event-price-box">
+                            <span class="event-price-lbl">Квиток:</span>
+                            <strong class="event-price-val">{{ event.ticket_price }}</strong>
+                        </div>
+                        <button type="button" class="btn-event-book" onclick="openReservationModal('Подія: {{ event.title|escapejs }}')">
+                            Забронювати стіл
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- ============================================== -->
+{% endif %}
+
+<!-- ============================================== -->
+<!-- 5. ABOUT / ATMOSPHERE / UNDERGROUND VAULTS -->
+<!-- ============================================== -->
+<section class="atmosphere-section" id="aboutSection">
+    <div class="container">
+        <div class="atmosphere-layout">
+            <div class="atmosphere-text-col">
+                <div class="badge-mini">ЛЕГЕНДАРНИЙ ПРОСТІР</div>
+                <h2 class="section-heading">Атмосфера Справжнього Бункера</h2>
+                <p class="lead-text">
+                    Бункермуз — це більше, ніж заклад. Це унікальний симбіоз історичної архітектури Тернополя, високої гастрономії та сучасного мистецтва.
+                </p>
+                <div class="features-list">
+                    <div class="feat-item">
+                        <span class="feat-icon">🏛️</span>
+                        <div>
+                            <h4>Склепіння XVII століття</h4>
+                            <p>Автентична старовинна цегляна кладка, що створює неповторну акустику та затишок.</p>
+                        </div>
+                    </div>
+                    <div class="feat-item">
+                        <span class="feat-icon">🍸</span>
+                        <div>
+                            <h4>Контактний авторський бар</h4>
+                            <p>Команда бартендерів, що готує класику та неординарні смоук-коктейлі світового рівня.</p>
+                        </div>
+                    </div>
+                    <div class="feat-item">
+                        <span class="feat-icon">🎤</span>
+                        <div>
+                            <h4>Караоке Evolution Pro & VIP Lounge</h4>
+                            <p>Ізольовані комфортні зони з м'якими диванами, преміум-кальянами та топовим звуком.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="atmo-cta">
+                    <button type="button" class="btn btn-gold" onclick="openReservationModal()">
+                        🥂 Забронювати столик зараз
+                    </button>
+                </div>
+            </div>
+
+            <div class="atmosphere-gallery-col">
+                <div class="atmo-mosaic-grid">
+                    <div class="mosaic-item item-large">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=700&q=80" alt="Інтер'єр Бункермуз">
+                        <span class="mosaic-caption">Головний зал склепінь</span>
+                    </div>
+                    <div class="mosaic-item">
+                        <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=500&q=80" alt="Коктейльний бар">
+                        <span class="mosaic-caption">Авторський бар</span>
+                    </div>
+                    <div class="mosaic-item">
+                        <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=500&q=80" alt="VIP зона">
+                        <span class="mosaic-caption">VIP Lounge</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- ============================================== -->
+
+<!-- ============================================== -->
+<!-- 6. REVIEWS & TESTIMONIALS -->
+<!-- ============================================== -->
+{% if reviews %}
+<section class="reviews-section" id="reviewsSection">
+    <div class="container">
+        <div class="section-title-wrap">
+            <div class="badge-mini">РЕАЛЬНІ ВІДГУКИ</div>
+            <h2 class="section-heading">Що кажуть наші гості</h2>
+            <p class="section-desc">Оцінка 4.8 на основі 1200+ відгуків у Google Maps та соцмережах</p>
+        </div>
+
+        <div class="reviews-grid">
+            {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-stars">
+                    {% for i in "12345" %}
+                    <span class="star-gold">★</span>
+                    {% endfor %}
+                </div>
+                <p class="review-text">"{{ review.text }}"</p>
+                <div class="review-author-row">
+                    <div class="author-avatar">{{ review.author|slice:":1" }}</div>
+                    <div>
+                        <strong class="author-name">{{ review.author }}</strong>
+                        <span class="review-source">{{ review.source }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="reviews-cta-row">
+            <button type="button" class="btn btn-outline" onclick="openReviewModal()">
+                ✍️ Залишити свій відгук
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- ============================================== -->
+{% endif %}
+
+<!-- ============================================== -->
+<!-- 7. LOCATION & MAP EMBED SECTION -->
+<!-- ============================================== -->
+<section class="map-section">
+    <div class="container">
+        <div class="map-card-box">
+            <div class="map-info-side">
+                <div class="badge-mini">ЯК НАС ЗНАЙТИ</div>
+                <h3 class="map-title">У самому серці Тернополя</h3>
+                <p class="map-address">📍 бульвар Тараса Шевченка, 1 (біля драматичного театру)</p>
+                
+                <div class="md-schedule-card">
+                    <div class="md-schedule-title">
+                        <span>🕒</span>
+                        <span>Робочий час закладу:</span>
+                    </div>
+                    <div class="schedule-table">
+                        <div class="sch-row closed">
+                            <span class="sch-day">Понеділок</span>
+                            <span class="sch-hours">Неробочий день</span>
+                        </div>
+                        <div class="sch-row closed">
+                            <span class="sch-day">Вівторок</span>
+                            <span class="sch-hours">Неробочий день</span>
+                        </div>
+                        <div class="sch-row closed">
+                            <span class="sch-day">Середа</span>
+                            <span class="sch-hours">Неробочий день</span>
+                        </div>
+                        <div class="sch-row open">
+                            <span class="sch-day">Четвер</span>
+                            <span class="sch-hours">16:00 – 23:00</span>
+                        </div>
+                        <div class="sch-row open">
+                            <span class="sch-day">П’ятниця</span>
+                            <span class="sch-hours">16:00 – 23:00</span>
+                        </div>
+                        <div class="sch-row open">
+                            <span class="sch-day">Субота</span>
+                            <span class="sch-hours">16:00 – 23:00</span>
+                        </div>
+                        <div class="sch-row open">
+                            <span class="sch-day">Неділя</span>
+                            <span class="sch-hours">16:00 – 23:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-details">
+                    <div class="md-item">
+                        <strong>Телефон для бронювання:</strong>
+                        <a href="tel:{{ restaurant_info.phone_clean }}">{{ restaurant_info.phone }}</a>
+                    </div>
+                    <div class="md-item">
+                        <strong>Доставка страв:</strong>
+                        <span>Четвер – Неділя з 16:00 до 22:30</span>
+                    </div>
+                </div>
+
+                <div class="map-actions-group">
+                    <a href="https://maps.google.com/?q=Бункермуз+Тернопіль+бульвар+Шевченка+1" target="_blank" rel="noopener" class="btn btn-gold btn-sm">
+                        🗺️ Відкрити в Google Maps
+                    </a>
+                    <a href="tel:{{ restaurant_info.phone_clean }}" class="btn btn-outline btn-sm">
+                        📞 Зателефонувати
+                    </a>
+                </div>
+            </div>
+
+            <div class="map-frame-side">
+                <iframe 
+                    title="BunkerMuz Location"
+                    src="https://maps.google.com/maps?q=49.5535,25.5948&hl=uk&z=16&output=embed" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================== -->
+<!-- ============================================== -->
+{% endblock %}

@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реєстрація адміністратора — BunkerMuz CRM</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/crm.css' %}">
+</head>
+<body class="crm-auth-body">
+    <div class="auth-card auth-card-wide">
+        <div class="auth-brand">
+            <span class="auth-crest">B</span>
+            <h2>Реєстрація Персоналу</h2>
+            <p>Створення облікового запису керуючого або адміністратора</p>
+        </div>
+
+        {% if error_message %}
+        <div class="auth-error-alert">
+            <span>⚠️</span> {{ error_message }}
+        </div>
+        {% endif %}
+
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-half">
+                    <label for="full_name">Ім'я та Прізвище *</label>
+                    <input type="text" name="full_name" id="full_name" class="form-control" placeholder="Тарас Мельник" required autofocus>
+                </div>
+                <div class="form-group col-half">
+                    <label for="username">Логін (Username) *</label>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="manager_taras" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Робочий Email</label>
+                <input type="email" name="email" id="email" class="form-control" placeholder="staff@bunkermuz.com">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-half">
+                    <label for="password">Пароль (від 6 симв.) *</label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div class="form-group col-half">
+                    <label for="password_confirm">Повторіть пароль *</label>
+                    <input type="password" name="password_confirm" id="password_confirm" class="form-control" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="secret_code">Код доступу для персоналу *</label>
+                <input type="text" name="secret_code" id="secret_code" class="form-control" placeholder="Введіть код: BUNKER" value="BUNKER" required>
+                <small class="form-text-hint">Службовий код для персоналу Бункермуз: <code>BUNKER</code></small>
+            </div>
+
+            <button type="submit" class="btn btn-gold btn-block btn-auth-submit">
+                Зареєструвати адміністратора та увійти →
+            </button>
+        </form>
+
+        <div class="auth-footer-nav">
+            <a href="{% url 'main:crm_login' %}">Вже зареєстровані? Увійти</a>
+            <span class="sep">&middot;</span>
+            <a href="{% url 'main:index' %}">На головну сайту</a>
+        </div>
+    </div>
+</body>
+</html>

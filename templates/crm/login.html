@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхід до CRM — BunkerMuz</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/crm.css' %}">
+</head>
+<body class="crm-auth-body">
+    <div class="auth-card">
+        <div class="auth-brand">
+            <span class="auth-crest">B</span>
+            <h2>BUNKERMUZ CRM</h2>
+            <p>Панель керування закладом та доставкою</p>
+        </div>
+
+        {% if error_message %}
+        <div class="auth-error-alert">
+            <span>⚠️</span> {{ error_message }}
+        </div>
+        {% endif %}
+
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Логін адміністратора *</label>
+                <input type="text" name="username" id="username" class="form-control" placeholder="admin" value="admin" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль *</label>
+                <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" value="admin123" required>
+            </div>
+
+            <div class="auth-quick-hint">
+                💡 За замовчуванням: <strong>admin</strong> / <strong>admin123</strong>
+            </div>
+
+            <button type="submit" class="btn btn-gold btn-block btn-auth-submit">
+                Увійти до панелі керування →
+            </button>
+        </form>
+
+        <div class="auth-footer-nav">
+            <a href="{% url 'main:crm_register' %}">Створити нового адміністратора (Реєстрація)</a>
+            <span class="sep">&middot;</span>
+            <a href="{% url 'main:index' %}">На сайт ресторану</a>
+        </div>
+    </div>
+</body>
+</html>

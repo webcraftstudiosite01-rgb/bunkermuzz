@@ -1,0 +1,114 @@
+<div class="modal-backdrop" id="orderTrackBackdrop" onclick="closeOrderTrackModal()"></div>
+
+<div class="modal-dialog modal-order-track" id="orderTrackModal" role="dialog" aria-modal="true" aria-labelledby="trackTitle">
+    <div class="modal-content track-modal-content">
+        <button class="modal-close-btn" onclick="closeOrderTrackModal()" aria-label="Закрити">&times;</button>
+
+        <div class="track-header">
+            <span class="track-kicker">ОНЛАЙН МОНІТОРИНГ</span>
+            <h3 class="track-title" id="trackTitle">Відстеження замовлення</h3>
+            <p class="track-subtitle">Введіть номер вашого чека, щоб дізнатися точний статус приготування та доставки</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="track-search-row">
+            <div class="track-input-wrap">
+                <span class="track-icon">🔍</span>
+                <input type="text" id="trackOrderInput" placeholder="Наприклад: BM-A1B2C3" maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter') searchOrderStatus()">
+            </div>
+            <button type="button" class="btn btn-gold" onclick="searchOrderStatus()">
+                Знайти
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="trackLoading" class="track-loading" style="display: none;">
+            <div class="spinner-gold"></div>
+            <span>Шукаємо замовлення у базі ресторану...</span>
+        </div>
+
+        <!-- Error State -->
+        <div id="trackError" class="track-error-box" style="display: none;">
+            <span class="error-icon">⚠️</span>
+            <p id="trackErrorMessage">Замовлення не знайдено. Перевірте номер та спробуйте знову.</p>
+        </div>
+
+        <!-- Result Box -->
+        <div id="trackResult" class="track-result-box" style="display: none;">
+            <div class="track-status-banner">
+                <div class="ts-left">
+                    <span class="ts-num" id="resOrderNum">#BM-000000</span>
+                    <span class="ts-date" id="resOrderDate">17.11.2026 18:30</span>
+                </div>
+                <div class="ts-badge-wrap">
+                    <span class="ts-status-badge status-active" id="resOrderStatus">Готується</span>
+                </div>
+            </div>
+
+            <!-- Stepper Timeline -->
+            <div class="track-timeline" id="resTimeline">
+                <div class="step-node active" id="step-new">
+                    <div class="node-circle">1</div>
+                    <div class="node-info">
+                        <strong>Прийнято</strong>
+                        <span>Зафіксовано</span>
+                    </div>
+                </div>
+                <div class="step-line active" id="line-1"></div>
+                <div class="step-node active" id="step-cooking">
+                    <div class="node-circle">2</div>
+                    <div class="node-info">
+                        <strong>Кухня</strong>
+                        <span>Готується шефом</span>
+                    </div>
+                </div>
+                <div class="step-line" id="line-2"></div>
+                <div class="step-node" id="step-delivering">
+                    <div class="node-circle">3</div>
+                    <div class="node-info">
+                        <strong>Курʼєр</strong>
+                        <span>У дорозі</span>
+                    </div>
+                </div>
+                <div class="step-line" id="line-3"></div>
+                <div class="step-node" id="step-completed">
+                    <div class="node-circle">4</div>
+                    <div class="node-info">
+                        <strong>Доставлено</strong>
+                        <span>Смачного!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Details -->
+            <div class="track-details-grid">
+                <div class="td-col">
+                    <span class="td-lbl">Гість:</span>
+                    <strong class="td-val" id="resClientName">—</strong>
+                </div>
+                <div class="td-col">
+                    <span class="td-lbl">Тип замовлення:</span>
+                    <strong class="td-val" id="resDeliveryType">Доставка курʼєром</strong>
+                </div>
+                <div class="td-col">
+                    <span class="td-lbl">Сума до сплати:</span>
+                    <strong class="td-val gold-text" id="resTotalAmount">0 ₴</strong>
+                </div>
+            </div>
+
+            <!-- Items List -->
+            <div class="track-items-box">
+                <h4>Склад замовлення:</h4>
+                <div class="track-items-list" id="resItemsList">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <div class="track-footer-action">
+                <button type="button" class="btn btn-outline btn-sm" onclick="searchOrderStatus()">
+                    🔄 Оновити статус зараз
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<div class="modal-backdrop" id="reviewModalBackdrop" onclick="closeReviewModal()"></div>
+
+<div class="modal-dialog" id="reviewModal" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+    <div class="modal-content">
+        <button class="modal-close-btn" onclick="closeReviewModal()" aria-label="Закрити">&times;</button>
+
+        <div id="reviewFormScreen">
+            <div class="modal-header">
+                <span class="modal-icon">⭐</span>
+                <h3 id="reviewModalTitle">Залишити відгук</h3>
+                <p class="modal-subtitle">Поділіться вашими враженнями від кухні, бару чи атмосфери Бункермуз</p>
+            </div>
+
+            <form id="reviewForm" onsubmit="submitReview(event)">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="revAuthor">Ваше ім'я або псевдонім *</label>
+                    <input type="text" id="revAuthor" class="form-control" placeholder="Олена" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Ваша оцінка *</label>
+                    <div class="star-rating-picker" id="starRatingPicker">
+                        <span class="star-item active" data-val="1">★</span>
+                        <span class="star-item active" data-val="2">★</span>
+                        <span class="star-item active" data-val="3">★</span>
+                        <span class="star-item active" data-val="4">★</span>
+                        <span class="star-item active" data-val="5">★</span>
+                    </div>
+                    <input type="hidden" id="revRating" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label for="revText">Ваш відгук *</label>
+                    <textarea id="revText" class="form-control" rows="3" placeholder="Що вам сподобалося найбільше?..." required></textarea>
+                </div>
+
+                <div id="reviewError" class="form-error-msg" style="display: none;"></div>
+
+                <button type="submit" class="btn-submit-order" id="btnSubmitReview">
+                    Опублікувати відгук
+                </button>
+            </form>
+        </div>
+
+        <div id="reviewSuccessScreen" style="display: none;" class="success-screen">
+            <div class="success-icon-wrap">
+                <span class="success-checkmark">💖</span>
+            </div>
+            <h3>Дякуємо за ваш відгук!</h3>
+            <p>Ваша думка допомагає нам бути найкращими у Тернополі.</p>
+            <button type="button" class="btn btn-gold btn-block" onclick="closeReviewModal()">
+                Закрити
+            </button>
+        </div>
+    </div>
+</div>

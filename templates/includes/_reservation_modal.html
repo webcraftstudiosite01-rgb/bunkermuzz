@@ -1,0 +1,116 @@
+<div class="modal-backdrop" id="reservationModalBackdrop" onclick="closeReservationModal()"></div>
+
+<div class="modal-dialog" id="reservationModal" role="dialog" aria-modal="true" aria-labelledby="reservationModalTitle">
+    <div class="modal-content">
+        <button class="modal-close-btn" onclick="closeReservationModal()" aria-label="Закрити">&times;</button>
+
+        <div id="reservationFormScreen">
+            <div class="modal-header">
+                <span class="modal-icon">🥂</span>
+                <h3 id="reservationModalTitle">Бронювання столика</h3>
+                <p class="modal-subtitle">Легендарний простір Бункермуз чекає на вас: бульв. Тараса Шевченка, 1</p>
+            </div>
+
+            <form id="reservationForm" onsubmit="submitReservation(event)">
+                {% csrf_token %}
+                <div class="selected-table-badge-wrap" id="selectedTableBadgeWrap" style="display: none;">
+                    <div class="selected-table-pill">
+                        <span class="st-icon">📍</span>
+                        <span class="st-text">Обраний стіл на схемі: <strong id="resSelectedTableDisplay">—</strong></span>
+                        <button type="button" class="btn-clear-table" onclick="clearSelectedTable()" title="Зняти вибір">&times;</button>
+                    </div>
+                    <input type="hidden" id="resSelectedTable" value="">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-half">
+                        <label for="resName">Ваше ім'я *</label>
+                        <input type="text" id="resName" class="form-control" placeholder="Іван" required>
+                    </div>
+                    <div class="form-group col-half">
+                        <label for="resPhone">Телефон *</label>
+                        <input type="tel" id="resPhone" class="form-control" placeholder="+38 (0__) ___-__-__" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-half">
+                        <label for="resDate">Дата візиту *</label>
+                        <input type="date" id="resDate" class="form-control" required>
+                    </div>
+                    <div class="form-group col-half">
+                        <label for="resTime">Час візиту *</label>
+                        <select id="resTime" class="form-control" required>
+                            <option value="16:00">16:00 (Відкриття)</option>
+                            <option value="16:30">16:30</option>
+                            <option value="17:00">17:00</option>
+                            <option value="17:30">17:30</option>
+                            <option value="18:00">18:00</option>
+                            <option value="18:30">18:30</option>
+                            <option value="19:00" selected>19:00 (Популярний)</option>
+                            <option value="19:30">19:30</option>
+                            <option value="20:00">20:00</option>
+                            <option value="20:30">20:30</option>
+                            <option value="21:00">21:00</option>
+                            <option value="21:30">21:30</option>
+                            <option value="22:00">22:00</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-half">
+                        <label for="resGuests">Кількість гостей *</label>
+                        <select id="resGuests" class="form-control">
+                            <option value="1">1 гість</option>
+                            <option value="2" selected>2 гостей (Романтична вечеря)</option>
+                            <option value="3">3 гостей</option>
+                            <option value="4">4 гостей</option>
+                            <option value="5">5 гостей</option>
+                            <option value="6">6 гостей (Компанія)</option>
+                            <option value="8">8+ гостей (Банкет / свято)</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-half">
+                        <label for="resZone">Атмосферна зона *</label>
+                        <select id="resZone" class="form-control">
+                            <option value="main" selected>🏛️ Головний зал (Підвал-склепіння)</option>
+                            <option value="lounge">🛋️ VIP Lounge & Кальяни</option>
+                            <option value="karaoke">🎤 Караоке-зал Evolution</option>
+                            <option value="art">🎨 Зал Арт-галереї</option>
+                            <option value="bar">🍸 Контактна барна стійка</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="resRequests">Особливі побажання / Привід</label>
+                    <textarea id="resRequests" class="form-control" rows="2" placeholder="День народження, річниця, дитячий стільчик, кальян тощо..."></textarea>
+                </div>
+
+                <div id="reservationError" class="form-error-msg" style="display: none;"></div>
+
+                <button type="submit" class="btn-submit-order" id="btnSubmitReservation">
+                    <span class="btn-text">Забронювати зараз</span>
+                    <span class="btn-spinner" style="display: none;">⏳ Відправка...</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Success Screen -->
+        <div id="reservationSuccessScreen" style="display: none;" class="success-screen">
+            <div class="success-icon-wrap">
+                <span class="success-checkmark">✨</span>
+            </div>
+            <h3>Столик заброньовано!</h3>
+            <p id="reservationSuccessMessage" class="res-success-text">Дякуємо! Наш хостес зв'яжеться з вами для фінального підтвердження деталей.</p>
+            <div class="success-details-card">
+                <p>📍 Адреса: <strong>м. Тернопіль, бульвар Тараса Шевченка, 1</strong></p>
+                <p>🕒 Робочий час: <strong>Чт–Нд з 16:00 до 23:00</strong> (Пн–Ср: неробочі дні)</p>
+            </div>
+            <button type="button" class="btn btn-gold btn-block" onclick="closeReservationModal()">
+                Чудово, закрити
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <title>{% block title %}Бункермуз — Ресторан • Арт-клуб • Лаундж-бар • Караоке в Тернополі{% endblock %}</title>
+    <meta name="description" content="Бункермуз у Тернополі на бульварі Тараса Шевченка, 1. Авторське меню, найкращі суші та бургери, крафтовий бар, кальяни, жива музика, караоке та швидка доставка їжі.">
+    <meta property="og:title" content="Бункермуз — Культовий простір у центрі Тернополя">
+    <meta property="og:description" content="Замовляйте суші, бургери та страви від шефа з доставкою по Тернополю або бронюйте столик онлайн у легендарному підвальному просторі.">
+    <meta property="og:image" content="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/dXFyHYI-buvCXFO-ICSUHlE.jpeg">
+    <meta property="og:type" content="website">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/logo/thumbnail_wuSVP-BDSTy-MclbO.jpeg" type="image/jpeg">
+
+    <!-- Premium Editorial & Luxury Fonts (Full Ukrainian/Cyrillic support) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2.5">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bunker-theme">
+    <!-- Top Scroll Progress Bar -->
+    <div id="scrollProgressBar" class="scroll-progress-bar"></div>
+
+    <!-- Background Ambient Glows -->
+    <div class="ambient-glow glow-top"></div>
+    <div class="ambient-glow glow-middle"></div>
+    <div class="ambient-glow glow-bottom"></div>
+
+    <!-- Navigation Header -->
+    {% include 'includes/_navbar.html' %}
+
+    <!-- Main Content -->
+    <main class="page-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Slide-over Cart Drawer -->
+    {% include 'includes/_cart_drawer.html' %}
+
+    <!-- Modals -->
+    {% include 'includes/_checkout_modal.html' %}
+    {% include 'includes/_reservation_modal.html' %}
+    {% include 'includes/_quick_view_modal.html' %}
+    {% include 'includes/_review_modal.html' %}
+    {% include 'includes/_order_tracker_modal.html' %}
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Floating Mobile Bottom Bar -->
+    <div class="mobile-action-bar">
+        <a href="#menuSection" class="mobile-btn">
+            <span class="m-icon">🍱</span>
+            <span class="m-text">Меню</span>
+        </a>
+        <button class="mobile-btn" onclick="openReservationModal()">
+            <span class="m-icon">🥂</span>
+            <span class="m-text">Бронь</span>
+        </button>
+        <button class="mobile-btn cart-trigger" onclick="toggleCartDrawer()">
+            <span class="m-icon">🛍️</span>
+            <span class="m-text">Кошик</span>
+            <span class="mobile-cart-badge badge-count">0</span>
+        </button>
+        <a href="tel:{{ restaurant_info.phone_clean }}" class="mobile-btn">
+            <span class="m-icon">📞</span>
+            <span class="m-text">Дзвінок</span>
+        </a>
+    </div>
+
+    <!-- Footer -->
+    {% include 'includes/_footer.html' %}
+
+    <!-- JavaScript Application Entry -->
+    <script src="{% static 'js/main.js' %}?v=2.5"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

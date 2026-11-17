@@ -1,0 +1,76 @@
+<header class="navbar-wrapper" id="mainHeader">
+    <div class="nav-container">
+        <!-- Logo & Subtitle -->
+        <a href="{% url 'main:index' %}" class="brand-box">
+            <span class="brand-crest">B</span>
+            <div class="brand-text">
+                <span class="brand-title">БУНКЕРМУЗ</span>
+                <span class="brand-sub">EST. 2011 &middot; TERNOPIL</span>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="desktop-menu">
+            <a href="#menuSection" class="nav-item" onclick="openAndScrollToMenu(event)">Меню</a>
+            <a href="#zonesSection" class="nav-item">Зони</a>
+            <a href="#eventsSection" class="nav-item">Афіша</a>
+            <a href="#reviewsSection" class="nav-item">Відгуки</a>
+            <a href="#contactsSection" class="nav-item">Контакти</a>
+            <a href="javascript:void(0)" class="nav-item nav-track-link" onclick="openOrderTrackModal()" title="Відстежити замовлення">🛵 Статус</a>
+            <a href="{% url 'main:crm_login' %}" class="nav-item nav-crm-link" title="Панель керування BunkerMuz CRM" target="_blank">🔐 CRM</a>
+        </nav>
+
+        <!-- Right Action Controls -->
+        <div class="header-actions">
+            <a href="tel:{{ restaurant_info.phone_clean }}" class="phone-link hide-tablet">
+                <span class="phone-icon">📞</span>
+                <span class="phone-number">{{ restaurant_info.phone }}</span>
+            </a>
+
+            <button type="button" class="btn-reservation" onclick="openReservationModal()">
+                Бронь столу
+            </button>
+
+            <!-- Cart Trigger Button -->
+            <button type="button" class="btn-cart-header cart-trigger" onclick="toggleCartDrawer()" aria-label="Відкрити кошик">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-label">Кошик</span>
+                <span class="cart-badge badge-count">0</span>
+                <span class="cart-total-badge" id="headerCartTotal">0 ₴</span>
+            </button>
+
+            <!-- Mobile Hamburger Menu Button -->
+            <button type="button" class="hamburger-btn" id="mobileMenuBtn" aria-label="Меню" onclick="toggleMobileNav()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Nav Slide Panel -->
+    <div class="mobile-nav-panel" id="mobileNavPanel">
+        <div class="mobile-nav-links">
+            <a href="#menuSection" onclick="closeMobileNav(); openAndScrollToMenu(event);">🍱 Меню доставки</a>
+            <a href="#zonesSection" onclick="closeMobileNav()">🏛️ Зони та зали ресторану</a>
+            <a href="#eventsSection" onclick="closeMobileNav()">🎧 Афіша вечірок</a>
+            <a href="#aboutSection" onclick="closeMobileNav()">🕯️ Атмосфера простору</a>
+            <a href="#reviewsSection" onclick="closeMobileNav()">⭐️ Відгуки гостей</a>
+            <a href="#contactsSection" onclick="closeMobileNav()">📍 Адреса та графік</a>
+            <a href="javascript:void(0)" onclick="closeMobileNav(); openOrderTrackModal();" class="mobile-nav-highlight">🛵 Відстежити замовлення</a>
+            <a href="{% url 'main:crm_login' %}" target="_blank" class="mobile-nav-highlight">🔐 CRM Термінал закладу</a>
+            <div class="mobile-nav-divider"></div>
+            <button class="btn btn-gold btn-block" onclick="closeMobileNav(); openReservationModal();">
+                🥂 Забронювати стіл онлайн
+            </button>
+            <a href="tel:{{ restaurant_info.phone_clean }}" class="mobile-phone-cta">
+                📞 Зателефонувати: {{ restaurant_info.phone }}
+            </a>
+            <div class="mobile-socials">
+                <a href="{{ restaurant_info.instagram }}" target="_blank" rel="noopener">Instagram</a>
+                <span>&bull;</span>
+                <span>бульв. Тараса Шевченка, 1</span>
+            </div>
+        </div>
+    </div>
+</header>

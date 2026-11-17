@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BunkerMuz CRM — Панель керування закладом{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CRM Stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/crm.css' %}?v=2.3">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="crm-body">
+    <!-- Top Bar -->
+    <header class="crm-topbar">
+        <div class="crm-topbar-inner">
+            <div class="crm-brand-wrap">
+                <a href="{% url 'main:crm_dashboard' %}" class="crm-brand">
+                    <span class="crm-crest">B</span>
+                    <div class="crm-brand-text">
+                        <span class="crm-title">BUNKERMUZ CRM</span>
+                        <span class="crm-badge-pro">LIVE MANAGEMENT SYSTEM</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="crm-controls">
+                <a href="{% url 'main:index' %}" target="_blank" class="crm-btn-link" title="Перейти на публічний сайт ресторану">
+                    <span>🌐 На сайт ресторану</span>
+                </a>
+
+                <button type="button" class="crm-sound-btn" id="btnToggleSound" onclick="toggleAudioAlerts()" title="Увімкнути/вимкнути звук нових замовлень">
+                    <span id="soundIcon">🔔</span>
+                    <span id="soundLabel">Звук: On</span>
+                </button>
+
+                <div class="crm-user-profile">
+                    <div class="crm-avatar">{{ user.username|slice:":1"|upper }}</div>
+                    <div class="crm-user-info hide-mobile">
+                        <strong class="crm-username">{{ user.get_full_name|default:user.username }}</strong>
+                        <span class="crm-role">Адміністратор</span>
+                    </div>
+                    <a href="{% url 'main:crm_logout' %}" class="crm-logout-btn" title="Вийти з системи">Вийти →</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main CRM Content Area -->
+    <main class="crm-main-viewport">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Audio ding element using Web Audio API in crm.js -->
+    <div id="crmToastContainer" class="crm-toast-container"></div>
+
+    <script src="{% static 'js/crm.js' %}?v=2.2"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

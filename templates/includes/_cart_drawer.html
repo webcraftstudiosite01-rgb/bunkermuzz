@@ -1,0 +1,80 @@
+<!-- Cart Backdrop -->
+<div class="cart-backdrop" id="cartBackdrop" onclick="closeCartDrawer()"></div>
+
+<!-- Slide-Over Cart Drawer -->
+<aside class="cart-drawer" id="cartDrawer" aria-label="Кошик замовлень">
+    <div class="cart-header">
+        <div class="cart-title-wrap">
+            <span class="cart-title-icon">🛍️</span>
+            <h3>Ваше замовлення</h3>
+            <span class="cart-items-counter" id="cartDrawerCount">0 страв</span>
+        </div>
+        <button class="cart-close-btn" onclick="closeCartDrawer()" aria-label="Закрити кошик">&times;</button>
+    </div>
+
+    <!-- Free Delivery Progress Bar -->
+    <div class="delivery-progress-box">
+        <div class="progress-info">
+            <span id="deliveryProgressText">Додайте страв на 800 ₴ для безкоштовної доставки</span>
+            <span class="progress-percent" id="deliveryProgressPercent">0%</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-bar-fill" id="deliveryProgressFill" style="width: 0%;"></div>
+        </div>
+    </div>
+
+    <!-- Cart Items Scrollable Container -->
+    <div class="cart-body" id="cartItemsList">
+        <!-- Rendered dynamically by JavaScript -->
+    </div>
+
+    <!-- Cart Footer & Checkout -->
+    <div class="cart-footer" id="cartFooter">
+        <!-- Promo Code Row -->
+        <div class="promo-box">
+            <div class="promo-input-group">
+                <input type="text" id="promoInput" placeholder="Промокод (спробуй BUNKER10)" autocomplete="off">
+                <button type="button" class="btn-promo-apply" onclick="applyPromoCode()">Застосувати</button>
+            </div>
+            <div id="promoMessage" class="promo-message"></div>
+        </div>
+
+        <!-- Delivery vs Takeaway (-10%) quick toggle -->
+        <div class="cart-delivery-toggle">
+            <button type="button" class="btn-dt-tab active" data-type="delivery" onclick="selectCartDeliveryType('delivery')">
+                <span>🛵 Доставка</span>
+            </button>
+            <button type="button" class="btn-dt-tab" data-type="takeaway" onclick="selectCartDeliveryType('takeaway')">
+                <span>🛍️ Самовивіз <strong class="badge-dt-discount">-10%</strong></span>
+            </button>
+        </div>
+
+        <!-- Price Breakdown -->
+        <div class="cart-summary">
+            <div class="summary-line">
+                <span>Вартість страв:</span>
+                <span id="cartSubtotal">0 ₴</span>
+            </div>
+            <div class="summary-line discount-line" id="discountLine" style="display: none;">
+                <span>Знижка:</span>
+                <span id="cartDiscount">-0 ₴</span>
+            </div>
+            <div class="summary-line">
+                <span>Доставка:</span>
+                <span id="cartDeliveryCost">60 ₴</span>
+            </div>
+            <div class="summary-line total-line">
+                <span>Разом до сплати:</span>
+                <span class="final-total" id="cartFinalTotal">0 ₴</span>
+            </div>
+        </div>
+
+        <!-- Checkout Action Button -->
+        <button type="button" class="btn-checkout-primary" id="btnGoToCheckout" onclick="openCheckoutModal()">
+            <span>Оформити замовлення</span>
+            <span class="checkout-arrow">→</span>
+        </button>
+
+        <p class="cart-note">⚡ Середній час доставки по Тернополю: 35-50 хв</p>
+    </div>
+</aside>

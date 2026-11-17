@@ -1,0 +1,67 @@
+<footer class="site-footer" id="contactsSection">
+    <div class="footer-top-grid container">
+        <!-- Brand Info -->
+        <div class="footer-col col-brand">
+            <div class="footer-brand">
+                <span class="fb-crest">⚡</span>
+                <span class="fb-title">БУНКЕРМУЗ</span>
+            </div>
+            <p class="fb-desc">
+                Легендарний ресторан, арт-клуб, лаундж-бар та караоке у центрі Тернополя. Історичні склепіння, авторська гастрономія, свіжі суші, крафтові коктейлі та неперевершена енергія.
+            </p>
+            <div class="footer-socials">
+                <a href="{{ restaurant_info.instagram }}" target="_blank" rel="noopener" class="social-badge" title="Instagram">
+                    📷 Instagram @bunkermuz
+                </a>
+            </div>
+        </div>
+
+        <!-- Working Hours & Kitchen -->
+        <div class="footer-col">
+            <h4 class="f-col-title">Робочий час</h4>
+            <ul class="f-info-list f-schedule-list">
+                <li class="closed-row"><span class="f-lbl">Пн – Ср:</span> <span class="closed-tag">Неробочі дні</span></li>
+                <li><span class="f-lbl">Четвер:</span> <strong class="open-hours">16:00 – 23:00</strong></li>
+                <li><span class="f-lbl">П’ятниця:</span> <strong class="open-hours">16:00 – 23:00</strong></li>
+                <li><span class="f-lbl">Субота:</span> <strong class="open-hours">16:00 – 23:00</strong></li>
+                <li><span class="f-lbl">Неділя:</span> <strong class="open-hours">16:00 – 23:00</strong></li>
+                <li style="margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px dashed rgba(255,255,255,0.08);"><span class="f-lbl">Кухня та бар:</span> <strong>до 22:30</strong></li>
+            </ul>
+        </div>
+
+        <!-- Location & Contacts -->
+        <div class="footer-col">
+            <h4 class="f-col-title">Локація та зв'язок</h4>
+            <ul class="f-info-list">
+                <li>📍 <strong>м. Тернопіль, бульвар Тараса Шевченка, 1</strong></li>
+                <li>📞 <a href="tel:{{ restaurant_info.phone_clean }}" class="f-phone-link">{{ restaurant_info.phone }}</a></li>
+                <li>🛵 Безкоштовна доставка від {{ restaurant_info.free_delivery_from }} ₴</li>
+                <li>💳 Готівка, Термінал, Apple Pay, LiqPay</li>
+            </ul>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="footer-col">
+            <h4 class="f-col-title">Швидкі дії</h4>
+            <div class="footer-quick-btns">
+                <button type="button" class="btn btn-gold btn-sm btn-block" onclick="openReservationModal()">
+                    🥂 Забронювати стіл
+                </button>
+                <button type="button" class="btn btn-outline btn-sm btn-block" onclick="openOrderTrackModal()">
+                    🛵 Відстежити замовлення
+                </button>
+                <button type="button" class="btn btn-outline btn-sm btn-block" onclick="openReviewModal()">
+                    ✍️ Залишити відгук
+                </button>
+                <a href="{% url 'main:crm_login' %}" target="_blank" class="admin-entry-link crm-footer-link">
+                    🔐 BunkerMuz CRM Термінал
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom-bar container">
+        <p>&copy; {% now "Y" %} <strong>Бункермуз (BunkerMuz)</strong>. Всі права захищено.</p>
+        <p class="footer-signature">Crafted with precision &middot; High-Performance Django Experience</p>
+    </div>
+</footer>

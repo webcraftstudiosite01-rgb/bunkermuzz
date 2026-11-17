@@ -1,0 +1,124 @@
+<div class="modal-backdrop" id="checkoutModalBackdrop" onclick="closeCheckoutModal()"></div>
+
+<div class="modal-dialog" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutModalTitle">
+    <div class="modal-content">
+        <button class="modal-close-btn" onclick="closeCheckoutModal()" aria-label="Закрити">&times;</button>
+
+        <!-- Order Form Screen -->
+        <div id="checkoutFormScreen">
+            <div class="modal-header">
+                <span class="modal-icon">📦</span>
+                <h3 id="checkoutModalTitle">Оформлення замовлення</h3>
+                <p class="modal-subtitle">Заповніть дані для оперативної доставки або самовивозу</p>
+            </div>
+
+            <form id="checkoutForm" onsubmit="submitOrder(event)">
+                {% csrf_token %}
+                <!-- Delivery Type Tabs -->
+                <div class="delivery-tabs">
+                    <button type="button" class="tab-btn active" data-type="delivery" onclick="setDeliveryType('delivery')">
+                        🛵 Доставка
+                    </button>
+                    <button type="button" class="tab-btn" data-type="takeaway" onclick="setDeliveryType('takeaway')">
+                        🛍️ Самовивіз (-10%)
+                    </button>
+                    <button type="button" class="tab-btn" data-type="table" onclick="setDeliveryType('table')">
+                        🛎️ До столика
+                    </button>
+                </div>
+                <input type="hidden" id="orderDeliveryType" name="delivery_type" value="delivery">
+
+                <!-- Dynamic Address Fields -->
+                <div id="fieldAddressGroup" class="form-group">
+                    <label for="orderAddress">Адреса доставки у Тернополі *</label>
+                    <input type="text" id="orderAddress" class="form-control" placeholder="Вулиця, номер будинку, під'їзд, поверх, кв." required>
+                </div>
+
+                <div id="fieldTableGroup" class="form-group" style="display: none;">
+                    <label for="orderTableNumber">Номер вашого столика в залі *</label>
+                    <input type="text" id="orderTableNumber" class="form-control" placeholder="Наприклад: Стіл № 7 (зал зі склепінням)">
+                </div>
+
+                <div id="fieldTakeawayNote" class="takeaway-banner" style="display: none;">
+                    📍 Самовивіз за адресою: <strong>м. Тернопіль, бульвар Тараса Шевченка, 1</strong>. Знижка 10% враховується автоматично!
+                </div>
+
+                <!-- Personal Info -->
+                <div class="form-row">
+                    <div class="form-group col-half">
+                        <label for="orderName">Ваше ім'я *</label>
+                        <input type="text" id="orderName" class="form-control" placeholder="Олександр" required>
+                    </div>
+                    <div class="form-group col-half">
+                        <label for="orderPhone">Номер телефону *</label>
+                        <input type="tel" id="orderPhone" class="form-control" placeholder="+38 (0__) ___-__-__" required>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="form-group">
+                    <label>Спосіб оплати *</label>
+                    <div class="payment-options">
+                        <label class="radio-card">
+                            <input type="radio" name="payment_method" value="card_courier" checked>
+                            <span class="radio-ui"></span>
+                            <span class="radio-label">💳 Терміналом курʼєру</span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="payment_method" value="cash">
+                            <span class="radio-ui"></span>
+                            <span class="radio-label">💵 Готівкою</span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="payment_method" value="card_online">
+                            <span class="radio-ui"></span>
+                            <span class="radio-label">⚡ Онлайн (Apple/Google Pay)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Comment -->
+                <div class="form-group">
+                    <label for="orderComment">Коментар або побажання для кухні</label>
+                    <textarea id="orderComment" class="form-control" rows="2" placeholder="Кількість приборів, додаткові серветки, код домофону..."></textarea>
+                </div>
+
+                <!-- Order Final Overview inside modal -->
+                <div class="checkout-review-box">
+                    <div class="cr-row">
+                        <span>Замовлення:</span>
+                        <strong id="modalItemsSummary">0 страв</strong>
+                    </div>
+                    <div class="cr-row cr-highlight">
+                        <span>До сплати:</span>
+                        <strong class="cr-total" id="modalFinalTotal">0 ₴</strong>
+                    </div>
+                </div>
+
+                <div id="checkoutError" class="form-error-msg" style="display: none;"></div>
+
+                <button type="submit" class="btn-submit-order" id="btnSubmitOrder">
+                    <span class="btn-text">Підтвердити замовлення</span>
+                    <span class="btn-spinner" style="display: none;">⏳ Обробка...</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Success Screen -->
+        <div id="checkoutSuccessScreen" style="display: none;" class="success-screen">
+            <div class="success-icon-wrap">
+                <span class="success-checkmark">🎉</span>
+            </div>
+            <h3>Замовлення успішно оформлено!</h3>
+            <p class="order-id-display">Номер замовлення: <span id="confirmedOrderNumber">#BM-000000</span></p>
+            <div class="success-details-card">
+                <p>📍 Ми вже передали замовлення на кухню ресторану.</p>
+                <p>⏱️ Очікуйте дзвінок або SMS від адміністратора протягом 5 хвилин.</p>
+                <p>📞 Довідка: <a href="tel:{{ restaurant_info.phone_clean }}">{{ restaurant_info.phone }}</a></p>
+            </div>
+            <button type="button" class="btn btn-gold btn-block" onclick="closeCheckoutModal()">
+                Чудово, повернутися на сайт
+            </button>
+        </div>
+    </div>
+</div>

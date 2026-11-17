@@ -1,0 +1,440 @@
+{% extends 'crm/base_crm.html' %}
+{% load static %}
+
+{% block content %}
+<div class="crm-container">
+    <!-- Top Greeting & Header -->
+    <div class="crm-header-row">
+        <div>
+            <h1 class="crm-page-title">Панель керування закладом</h1>
+            <p class="crm-subtitle">Оперативний контроль доставки, замовлень, броні столиків та меню в реальному часі</p>
+        </div>
+        <div class="crm-header-actions">
+            <span class="live-status-pill">
+                <span class="live-status-dot"></span>
+                <span>СИСТЕМА ОНЛАЙН &middot; ОНОВЛЕННЯ 10 СЕК</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- KPI Metric Cards Grid -->
+    <div class="crm-kpi-grid">
+        <div class="kpi-card kpi-card-gold">
+            <div class="kpi-icon">💰</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Сьогоднішній виторг</span>
+                <strong class="kpi-value">{{ kpi.today_revenue|floatformat:0 }} ₴</strong>
+                <span class="kpi-sub">Загалом: {{ kpi.total_revenue|floatformat:0 }} ₴</span>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-card-emerald">
+            <div class="kpi-icon">📦</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Активні замовлення</span>
+                <strong class="kpi-value" id="kpiActiveOrders">{{ kpi.active_orders_count }}</strong>
+                <span class="kpi-sub">Всього замовлень: {{ kpi.orders_count }}</span>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-card-blue">
+            <div class="kpi-icon">🥂</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Бронювання сьогодні</span>
+                <strong class="kpi-value">{{ kpi.today_reservations_count }}</strong>
+                <span class="kpi-sub">Всього заявок: {{ kpi.total_reservations_count }}</span>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-card-purple">
+            <div class="kpi-icon">🍽️</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Меню та позиції</span>
+                <strong class="kpi-value">{{ kpi.total_menu_count }}</strong>
+                <span class="kpi-sub">В стоп-листі: <span id="kpiStopCount">{{ kpi.stop_list_count }}</span></span>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-card-amber">
+            <div class="kpi-icon">⭐</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Середній рейтинг</span>
+                <strong class="kpi-value">{{ kpi.avg_rating }} ★</strong>
+                <span class="kpi-sub">Всього відгуків: {{ kpi.reviews_count }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CRM Navigation Tabs -->
+    <div class="crm-tabs-nav">
+        <button type="button" class="crm-tab-btn active" data-tab="orders" onclick="switchCrmTab('orders')" title="Керування замовленнями та доставкою">
+            <span>📦 Замовлення</span>
+            <span class="tab-badge" id="badgeOrdersCount">{{ orders.count }}</span>
+        </button>
+        <button type="button" class="crm-tab-btn" data-tab="reservations" onclick="switchCrmTab('reservations')" title="Керування бронями столів">
+            <span>🥂 Бронювання</span>
+            <span class="tab-badge">{{ reservations.count }}</span>
+        </button>
+        <button type="button" class="crm-tab-btn" data-tab="menu" onclick="switchCrmTab('menu')" title="Керування стравами та стоп-листом">
+            <span>🍽️ Меню</span>
+            <span class="tab-badge">{{ menu_items.count }}</span>
+        </button>
+        <button type="button" class="crm-tab-btn" data-tab="events" onclick="switchCrmTab('events')" title="Керування подіями та афішею">
+            <span>🎧 Афіша</span>
+            <span class="tab-badge">{{ events.count }}</span>
+        </button>
+        <button type="button" class="crm-tab-btn" data-tab="reviews" onclick="switchCrmTab('reviews')" title="Відгуки гостей">
+            <span>⭐ Відгуки</span>
+            <span class="tab-badge">{{ reviews.count }}</span>
+        </button>
+    </div>
+
+    <!-- =========================================================================
+         TAB 1: ORDERS & DELIVERIES
+         ========================================================================= -->
+    <div class="crm-tab-panel active" id="panel-orders">
+        <!-- Order Filters -->
+        <div class="crm-filter-bar">
+            <div class="filter-group">
+                <button type="button" class="order-filter-chip active" data-filter="all" onclick="filterCrmOrders('all')">
+                    Всі ({{ orders.count }})
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="new" onclick="filterCrmOrders('new')">
+                    ⚡ Нові
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="cooking" onclick="filterCrmOrders('cooking')">
+                    🍳 На кухні
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="delivering" onclick="filterCrmOrders('delivering')">
+                    🛵 В дорозі
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="completed" onclick="filterCrmOrders('completed')">
+                    ✅ Виконані
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="cancelled" onclick="filterCrmOrders('cancelled')">
+                    ❌ Скасовані
+                </button>
+            </div>
+            <div class="filter-search-box">
+                <input type="text" id="orderSearchInput" class="crm-search-input" placeholder="🔍 Пошук за номером, імʼям чи телефоном..." oninput="searchCrmOrders()">
+            </div>
+        </div>
+
+        <!-- Orders Grid / Cards -->
+        <div class="orders-cards-stream" id="ordersStream">
+            {% for order in orders %}
+            <div class="crm-order-card status-{{ order.status }}" id="orderRow-{{ order.id }}" data-status="{{ order.status }}" data-search="{{ order.order_number|lower }} {{ order.client_name|lower }} {{ order.client_phone }}">
+                <div class="order-card-header">
+                    <div class="order-header-main">
+                        <strong class="order-code">#{{ order.order_number }}</strong>
+                        <span class="order-datetime">{{ order.created_at|date:"d.m.Y H:i" }}</span>
+                        <span class="badge-delivery-type">{{ order.get_delivery_type_display }}</span>
+                    </div>
+                    <div class="order-header-status">
+                        <span class="status-indicator status-pill-{{ order.status }}" id="statusBadge-{{ order.id }}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="order-card-body">
+                    <!-- Client & Delivery Info -->
+                    <div class="order-client-grid">
+                        <div class="oc-col">
+                            <span class="oc-label">Клієнт:</span>
+                            <strong class="oc-val">{{ order.client_name }}</strong>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Телефон:</span>
+                            <a href="tel:{{ order.client_phone }}" class="oc-phone-link">📞 {{ order.client_phone }}</a>
+                        </div>
+                        <div class="oc-col oc-wide">
+                            <span class="oc-label">Адреса / Локація:</span>
+                            <span class="oc-val">
+                                {% if order.delivery_type == 'table' %}
+                                    🏛️ <strong>Столик в залі: {{ order.table_number }}</strong>
+                                {% elif order.delivery_type == 'takeaway' %}
+                                    🛍️ Самовивіз з ресторану (бульв. Тараса Шевченка, 1)
+                                {% else %}
+                                    🛵 {{ order.delivery_address|default:"Адреса не вказана" }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Оплата:</span>
+                            <span class="oc-payment-val">{{ order.get_payment_method_display }}</span>
+                        </div>
+                    </div>
+
+                    {% if order.comment %}
+                    <div class="order-comment-box">
+                        <span class="comm-icon">💬</span>
+                        <em>"{{ order.comment }}"</em>
+                    </div>
+                    {% endif %}
+
+                    <!-- Items Composition -->
+                    <div class="order-items-accordion">
+                        <div class="items-head">
+                            <span>Склад замовлення ({{ order.items.count }} поз.):</span>
+                        </div>
+                        <ul class="order-items-table">
+                            {% for item in order.items.all %}
+                            <li class="oit-row">
+                                <span class="oit-name">{{ item.title }}</span>
+                                <span class="oit-qty">{{ item.quantity }} × {{ item.price|floatformat:0 }} ₴</span>
+                                <strong class="oit-total">{{ item.item_total|floatformat:0 }} ₴</strong>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="order-card-footer">
+                    <div class="order-total-block">
+                        <span class="ot-lbl">До сплати:</span>
+                        <strong class="ot-amount">{{ order.total_amount|floatformat:0 }} ₴</strong>
+                    </div>
+
+                    <!-- Instant Status Controls -->
+                    <div class="status-action-btns">
+                        <button type="button" class="btn-st btn-st-cooking" onclick="updateOrderStatus({{ order.id }}, 'cooking')" title="Передати на кухню">
+                            🍳 На кухню
+                        </button>
+                        <button type="button" class="btn-st btn-st-delivering" onclick="updateOrderStatus({{ order.id }}, 'delivering')" title="Передати курʼєру">
+                            🛵 В дорогу
+                        </button>
+                        <button type="button" class="btn-st btn-st-completed" onclick="updateOrderStatus({{ order.id }}, 'completed')" title="Позначити виконаним">
+                            ✅ Виконано
+                        </button>
+                        <button type="button" class="btn-st btn-st-cancel" onclick="updateOrderStatus({{ order.id }}, 'cancelled')" title="Скасувати замовлення">
+                            ❌
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="crm-empty-box">
+                <span class="crm-empty-icon">📭</span>
+                <h3>Немає замовлень</h3>
+                <p>Нові замовлення з'являтимуться тут автоматично в реальному часі зі звуковим сигналом.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 2: TABLE RESERVATIONS
+         ========================================================================= -->
+    <div class="crm-tab-panel" id="panel-reservations">
+        <div class="crm-table-wrapper">
+            <table class="crm-data-table">
+                <thead>
+                    <tr>
+                        <th>Гість</th>
+                        <th>Телефон</th>
+                        <th>Дата та Час</th>
+                        <th>Гостей</th>
+                        <th>Зона закладу</th>
+                        <th>Побажання / Привід</th>
+                        <th>Статус</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in reservations %}
+                    <tr id="resRow-{{ res.id }}">
+                        <td><strong>{{ res.guest_name }}</strong></td>
+                        <td><a href="tel:{{ res.guest_phone }}" class="oc-phone-link">📞 {{ res.guest_phone }}</a></td>
+                        <td>
+                            <strong class="res-date">{{ res.reservation_date|date:"d.m.Y" }}</strong>
+                            <span class="res-time">{{ res.reservation_time|time:"H:i" }}</span>
+                        </td>
+                        <td><span class="badge-guests">👥 {{ res.guests_count }}</span></td>
+                        <td>{{ res.get_hall_zone_display }}</td>
+                        <td><small>{{ res.special_requests|default:"—" }}</small></td>
+                        <td>
+                            <span class="status-pill status-pill-{{ res.status }}" id="resStatusBadge-{{ res.id }}">
+                                {{ res.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="res-actions">
+                                <button type="button" class="btn-sm-action btn-act-approve" onclick="updateReservationStatus({{ res.id }}, 'confirmed')" title="Підтвердити">
+                                    ✅
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-done" onclick="updateReservationStatus({{ res.id }}, 'completed')" title="Завершено">
+                                    🏁
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-cancel" onclick="updateReservationStatus({{ res.id }}, 'cancelled')" title="Скасувати">
+                                    ❌
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4">Немає зареєстрованих бронювань</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 3: MENU MANAGEMENT & STOP-LIST
+         ========================================================================= -->
+    <div class="crm-tab-panel" id="panel-menu">
+        <div class="menu-tab-topbar">
+            <div>
+                <h3>Каталог страв ресторану ({{ menu_items.count }})</h3>
+                <p class="text-muted">Керуйте наявністю страв на кухні (Стоп-лист) в один клік</p>
+            </div>
+            <button type="button" class="btn btn-gold" onclick="openNewDishModal()">
+                + Створити нову страву
+            </button>
+        </div>
+
+        <div class="crm-menu-grid">
+            {% for item in menu_items %}
+            <div class="crm-menu-card {% if not item.is_available %}is-stopped{% endif %}" id="menuCard-{{ item.id }}">
+                <div class="cmc-thumb">
+                    {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    {% else %}
+                    <div class="cmc-placeholder">🍽️</div>
+                    {% endif %}
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">{{ item.category.name }}</span>
+                    <h4 class="cmc-title">{{ item.title }}</h4>
+                    <span class="cmc-weight">{{ item.weight }}</span>
+                    <strong class="cmc-price">{{ item.price|floatformat:0 }} ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle {% if item.is_available %}active{% endif %}" 
+                            id="stopBtn-{{ item.id }}" 
+                            onclick="toggleStopList({{ item.id }})">
+                        {% if item.is_available %}
+                        ✅ В наявності
+                        {% else %}
+                        ⛔ Стоп-лист
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 4: EVENTS
+         ========================================================================= -->
+    <div class="crm-tab-panel" id="panel-events">
+        <div class="events-crm-grid">
+            {% for event in events %}
+            <div class="crm-event-card">
+                <div class="cec-img">
+                    <img src="{{ event.image_url }}" alt="{{ event.title }}">
+                    <span class="cec-badge">{{ event.badge }}</span>
+                </div>
+                <div class="cec-body">
+                    <span class="cec-date">📅 {{ event.date_time|date:"d.m.Y H:i" }}</span>
+                    <h4>{{ event.title }}</h4>
+                    <p>{{ event.description|truncatechars:120 }}</p>
+                    <strong>Квиток: {{ event.ticket_price }}</strong>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 5: REVIEWS MODERATION
+         ========================================================================= -->
+    <div class="crm-tab-panel" id="panel-reviews">
+        <div class="crm-reviews-list">
+            {% for rev in reviews %}
+            <div class="crm-review-row" id="revRow-{{ rev.id }}">
+                <div class="crr-meta">
+                    <strong>{{ rev.author }}</strong>
+                    <span class="crr-stars">{{ rev.rating }}★</span>
+                    <small class="crr-date">{{ rev.created_at|date:"d.m.Y H:i" }} &middot; {{ rev.source }}</small>
+                </div>
+                <p class="crr-text">{{ rev.text }}</p>
+                <div class="crr-actions">
+                    <button type="button" class="btn-sm-action" onclick="toggleReview({{ rev.id }}, 'toggle')">
+                        {% if rev.is_approved %}🟢 Опубліковано{% else %}⚪ Приховано{% endif %}
+                    </button>
+                    <button type="button" class="btn-sm-action btn-act-cancel" onclick="toggleReview({{ rev.id }}, 'delete')">
+                        Видалити 🗑️
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center py-4">Немає відгуків для модерації</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal: New Dish Creator -->
+<div class="crm-modal-backdrop" id="newDishModalBackdrop" onclick="closeNewDishModal()"></div>
+<div class="crm-modal" id="newDishModal">
+    <div class="crm-modal-content">
+        <button class="crm-modal-close" onclick="closeNewDishModal()">&times;</button>
+        <h3>Додати нову позицію в меню</h3>
+        <p class="text-muted">Страва одразу з'явиться в меню на сайті та в доставці</p>
+
+        <form id="newDishForm" onsubmit="submitNewDish(event)">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Категорія меню *</label>
+                <select id="dishCat" class="form-control" required>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Назва страви *</label>
+                <input type="text" id="dishTitle" class="form-control" placeholder="Філадельфія з трюфелем" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-half">
+                    <label>Ціна (грн) *</label>
+                    <input type="number" id="dishPrice" class="form-control" placeholder="420" required min="1">
+                </div>
+                <div class="form-group col-half">
+                    <label>Вага / об'єм</label>
+                    <input type="text" id="dishWeight" class="form-control" placeholder="320 г">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Опис та інгредієнти</label>
+                <textarea id="dishDesc" class="form-control" rows="2" placeholder="Рис, норі, лосось, трюфельний соус..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Посилання на фото (URL)</label>
+                <input type="url" id="dishImage" class="form-control" placeholder="https://cdn-media... / https://images.unsplash...">
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="dishIsPopular">
+                    <span>Позначити як хіт закладу (ХІТ)</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-gold btn-block" id="btnSubmitNewDish">
+                Зберегти страву в меню
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

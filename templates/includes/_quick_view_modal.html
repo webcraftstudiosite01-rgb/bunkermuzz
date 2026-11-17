@@ -1,0 +1,46 @@
+<div class="modal-backdrop" id="quickViewBackdrop" onclick="closeQuickViewModal()"></div>
+
+<div class="modal-dialog modal-quick-view" id="quickViewModal" role="dialog" aria-modal="true" aria-labelledby="qvTitle">
+    <div class="modal-content qv-modal-content">
+        <button class="modal-close-btn" onclick="closeQuickViewModal()" aria-label="Закрити">&times;</button>
+
+        <div class="qv-grid">
+            <div class="qv-image-box">
+                <img id="qvImage" src="" alt="Страва Бункермуз">
+                <div class="qv-badges" id="qvBadges"></div>
+            </div>
+
+            <div class="qv-info-box">
+                <span class="qv-category" id="qvCategory">Категорія</span>
+                <h3 class="qv-title" id="qvTitle">Назва страви</h3>
+                <div class="qv-meta">
+                    <span class="qv-weight" id="qvWeight">300 г</span>
+                    <span class="qv-freshness">🌱 Свіжі інгредієнти щодня</span>
+                </div>
+
+                <div class="qv-description-wrap">
+                    <h4>Склад та опис:</h4>
+                    <p id="qvDescription" class="qv-desc-text">Опис страви...</p>
+                </div>
+
+                <div class="qv-action-bar">
+                    <div class="qv-price-block">
+                        <span class="qv-price-current" id="qvPrice">0 ₴</span>
+                        <span class="qv-price-old" id="qvOldPrice" style="display: none;">0 ₴</span>
+                    </div>
+
+                    <div class="qv-controls">
+                        <div class="stepper-wrap">
+                            <button type="button" class="btn-step" onclick="changeQvQuantity(-1)">−</button>
+                            <span class="step-value" id="qvQuantity">1</span>
+                            <button type="button" class="btn-step" onclick="changeQvQuantity(1)">+</button>
+                        </div>
+                        <button type="button" class="btn-add-qv" onclick="addQvToCart()">
+                            <span>До кошика</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
