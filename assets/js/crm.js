@@ -101,7 +101,28 @@ async function updateOrderStatus(orderId, status) {
             alert(data.error || 'Помилка зміни статусу');
         }
     } catch (e) {
-        console.error('Failed to update order status', e);
+        console.warn('Backend unavailable, updating order locally in static demo mode:', e);
+        const card = document.getElementById(`orderRow-${orderId}`);
+        const badge = document.getElementById(`statusBadge-${orderId}`);
+        const statusNames = {
+            new: 'Нове замовлення',
+            cooking: 'Готується на кухні',
+            delivering: 'Курʼєр у дорозі',
+            completed: 'Виконано успішно',
+            cancelled: 'Скасовано'
+        };
+        const statusDisplay = statusNames[status] || status;
+        if (card) {
+            card.className = `crm-order-card status-${status}`;
+            card.setAttribute('data-status', status);
+        }
+        if (badge) {
+            badge.className = `status-indicator status-pill-${status}`;
+            badge.textContent = statusDisplay;
+        }
+        const orderDisplayNum = card?.querySelector('.order-code')?.textContent.trim() || `#${orderId}`;
+        showCrmToast(`Замовлення ${orderDisplayNum}: статус змінено на "${statusDisplay}"`, '✅');
+        updateActiveKpiCount();
     }
 }
 
@@ -130,7 +151,20 @@ async function updateReservationStatus(resId, status) {
             showCrmToast(`Бронь #${resId}: ${data.status_display}`, '🥂');
         }
     } catch (e) {
-        console.error('Failed to update reservation', e);
+        console.warn('Backend unavailable, updating reservation locally in static demo mode:', e);
+        const badge = document.getElementById(`resStatusBadge-${resId}`);
+        const statusNames = {
+            pending: 'Очікує підтвердження',
+            confirmed: 'Підтверджено',
+            seated: 'Гості прибули',
+            cancelled: 'Скасовано'
+        };
+        const statusDisplay = statusNames[status] || status;
+        if (badge) {
+            badge.className = `status-pill status-pill-${status}`;
+            badge.textContent = statusDisplay;
+        }
+        showCrmToast(`Бронь #${resId}: ${statusDisplay}`, '🥂');
     }
 }
 
@@ -171,7 +205,26 @@ async function toggleStopList(itemId) {
             if (kpiStop) kpiStop.textContent = stoppedCount;
         }
     } catch (e) {
-        console.error('Stop-list toggle error', e);
+        console.warn('Backend unavailable, toggling stop-list locally in static demo mode:', e);
+        const card = document.getElementById(`menuCard-${itemId}`);
+        const btn = document.getElementById(`stopBtn-${itemId}`);
+        if (card && btn) {
+            const isCurrentlyStopped = card.classList.contains('is-stopped');
+            if (isCurrentlyStopped) {
+                card.classList.remove('is-stopped');
+                btn.className = 'btn-stoplist-toggle active';
+                btn.textContent = '✅ В наявності';
+                showCrmToast('Страву повернено в меню на сайті', '🍽️');
+            } else {
+                card.classList.add('is-stopped');
+                btn.className = 'btn-stoplist-toggle';
+                btn.textContent = '⛔ Стоп-лист';
+                showCrmToast('Страву додано в Стоп-лист (приховано на сайті)', '⚠️');
+            }
+            const stoppedCount = document.querySelectorAll('.crm-menu-card.is-stopped').length;
+            const kpiStop = document.getElementById('kpiStopCount');
+            if (kpiStop) kpiStop.textContent = stoppedCount;
+        }
     }
 }
 

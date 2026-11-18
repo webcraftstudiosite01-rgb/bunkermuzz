@@ -1,0 +1,2443 @@
+
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BunkerMuz CRM — Панель керування закладом</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CRM Stylesheet -->
+    <link rel="stylesheet" href="assets/css/crm.css?v=2.3">
+    
+</head>
+<body class="crm-body">
+    <!-- Top Bar -->
+    <header class="crm-topbar">
+        <div class="crm-topbar-inner">
+            <div class="crm-brand-wrap">
+                <a href="crm.html" class="crm-brand">
+                    <span class="crm-crest">B</span>
+                    <div class="crm-brand-text">
+                        <span class="crm-title">BUNKERMUZ CRM</span>
+                        <span class="crm-badge-pro">LIVE MANAGEMENT SYSTEM</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="crm-controls">
+                <a href="index.html" target="_blank" class="crm-btn-link" title="Перейти на публічний сайт ресторану">
+                    <span>🌐 На сайт ресторану</span>
+                </a>
+
+                <button type="button" class="crm-sound-btn" id="btnToggleSound" onclick="toggleAudioAlerts()" title="Увімкнути/вимкнути звук нових замовлень">
+                    <span id="soundIcon">🔔</span>
+                    <span id="soundLabel">Звук: On</span>
+                </button>
+
+                <div class="crm-user-profile">
+                    <div class="crm-avatar">A</div>
+                    <div class="crm-user-info hide-mobile">
+                        <strong class="crm-username">Адміністратор Бункермуз</strong>
+                        <span class="crm-role">Адміністратор</span>
+                    </div>
+                    <a href="index.html" class="crm-logout-btn" title="Вийти з системи">Вийти →</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main CRM Content Area -->
+    <main class="crm-main-viewport">
+        
+<div class="crm-container">
+    <!-- Top Greeting & Header -->
+    <div class="crm-header-row">
+        <div>
+            <h1 class="crm-page-title">Панель керування закладом</h1>
+            <p class="crm-subtitle">Оперативний контроль доставки, замовлень, броні столиків та меню в реальному часі</p>
+        </div>
+        <div class="crm-header-actions">
+            <span class="live-status-pill">
+                <span class="live-status-dot"></span>
+                <span>СИСТЕМА ОНЛАЙН &middot; ОНОВЛЕННЯ 10 СЕК</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- KPI Metric Cards Grid -->
+    <div class="crm-kpi-grid">
+        <div class="kpi-card kpi-card-gold">
+            <div class="kpi-icon">💰</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Сьогоднішній виторг</span>
+                <strong class="kpi-value">0 ₴</strong>
+                <span class="kpi-sub">Загалом: 3047 ₴</span>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-card-emerald">
+            <div class="kpi-icon">📦</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Активні замовлення</span>
+                <strong class="kpi-value" id="kpiActiveOrders">4</strong>
+                <span class="kpi-sub">Всього замовлень: 4</span>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-card-blue">
+            <div class="kpi-icon">🥂</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Бронювання сьогодні</span>
+                <strong class="kpi-value">1</strong>
+                <span class="kpi-sub">Всього заявок: 4</span>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-card-purple">
+            <div class="kpi-icon">🍽️</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Меню та позиції</span>
+                <strong class="kpi-value">66</strong>
+                <span class="kpi-sub">В стоп-листі: <span id="kpiStopCount">1</span></span>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-card-amber">
+            <div class="kpi-icon">⭐</div>
+            <div class="kpi-body">
+                <span class="kpi-label">Середній рейтинг</span>
+                <strong class="kpi-value">5,0 ★</strong>
+                <span class="kpi-sub">Всього відгуків: 5</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CRM Navigation Tabs -->
+    <div class="crm-tabs-nav">
+        <button type="button" class="crm-tab-btn active" data-tab="orders" onclick="switchCrmTab('orders')" title="Керування замовленнями та доставкою">
+            <span>📦 Замовлення</span>
+            <span class="tab-badge" id="badgeOrdersCount">4</span>
+        </button>
+        <button type="button" class="crm-tab-btn" data-tab="reservations" onclick="switchCrmTab('reservations')" title="Керування бронями столів">
+            <span>🥂 Бронювання</span>
+            <span class="tab-badge">4</span>
+        </button>
+        <button type="button" class="crm-tab-btn" data-tab="menu" onclick="switchCrmTab('menu')" title="Керування стравами та стоп-листом">
+            <span>🍽️ Меню</span>
+            <span class="tab-badge">66</span>
+        </button>
+        <button type="button" class="crm-tab-btn" data-tab="events" onclick="switchCrmTab('events')" title="Керування подіями та афішею">
+            <span>🎧 Афіша</span>
+            <span class="tab-badge">4</span>
+        </button>
+        <button type="button" class="crm-tab-btn" data-tab="reviews" onclick="switchCrmTab('reviews')" title="Відгуки гостей">
+            <span>⭐ Відгуки</span>
+            <span class="tab-badge">5</span>
+        </button>
+    </div>
+
+    <!-- =========================================================================
+         TAB 1: ORDERS & DELIVERIES
+         ========================================================================= -->
+    <div class="crm-tab-panel active" id="panel-orders">
+        <!-- Order Filters -->
+        <div class="crm-filter-bar">
+            <div class="filter-group">
+                <button type="button" class="order-filter-chip active" data-filter="all" onclick="filterCrmOrders('all')">
+                    Всі (4)
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="new" onclick="filterCrmOrders('new')">
+                    ⚡ Нові
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="cooking" onclick="filterCrmOrders('cooking')">
+                    🍳 На кухні
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="delivering" onclick="filterCrmOrders('delivering')">
+                    🛵 В дорозі
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="completed" onclick="filterCrmOrders('completed')">
+                    ✅ Виконані
+                </button>
+                <button type="button" class="order-filter-chip" data-filter="cancelled" onclick="filterCrmOrders('cancelled')">
+                    ❌ Скасовані
+                </button>
+            </div>
+            <div class="filter-search-box">
+                <input type="text" id="orderSearchInput" class="crm-search-input" placeholder="🔍 Пошук за номером, імʼям чи телефоном..." oninput="searchCrmOrders()">
+            </div>
+        </div>
+
+        <!-- Orders Grid / Cards -->
+        <div class="orders-cards-stream" id="ordersStream">
+            
+            <div class="crm-order-card status-cooking" id="orderRow-4" data-status="cooking" data-search="bm-640647 тестер +380981234567">
+                <div class="order-card-header">
+                    <div class="order-header-main">
+                        <strong class="order-code">#BM-640647</strong>
+                        <span class="order-datetime">17.11.2026 21:32</span>
+                        <span class="badge-delivery-type">🛍️ Самовивіз з Бункермуз (-10%)</span>
+                    </div>
+                    <div class="order-header-status">
+                        <span class="status-indicator status-pill-cooking" id="statusBadge-4">
+                            Готується на кухні
+                        </span>
+                    </div>
+                </div>
+
+                <div class="order-card-body">
+                    <!-- Client & Delivery Info -->
+                    <div class="order-client-grid">
+                        <div class="oc-col">
+                            <span class="oc-label">Клієнт:</span>
+                            <strong class="oc-val">Тестер</strong>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Телефон:</span>
+                            <a href="tel:+380981234567" class="oc-phone-link">📞 +380981234567</a>
+                        </div>
+                        <div class="oc-col oc-wide">
+                            <span class="oc-label">Адреса / Локація:</span>
+                            <span class="oc-val">
+                                
+                                    🛍️ Самовивіз з ресторану (бульв. Тараса Шевченка, 1)
+                                
+                            </span>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Оплата:</span>
+                            <span class="oc-payment-val">💵 Готівкою при отриманні</span>
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- Items Composition -->
+                    <div class="order-items-accordion">
+                        <div class="items-head">
+                            <span>Склад замовлення (1 поз.):</span>
+                        </div>
+                        <ul class="order-items-table">
+                            
+                            <li class="oit-row">
+                                <span class="oit-name">Карбонара</span>
+                                <span class="oit-qty">2 × 215 ₴</span>
+                                <strong class="oit-total">430 ₴</strong>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="order-card-footer">
+                    <div class="order-total-block">
+                        <span class="ot-lbl">До сплати:</span>
+                        <strong class="ot-amount">387 ₴</strong>
+                    </div>
+
+                    <!-- Instant Status Controls -->
+                    <div class="status-action-btns">
+                        <button type="button" class="btn-st btn-st-cooking" onclick="updateOrderStatus(4, 'cooking')" title="Передати на кухню">
+                            🍳 На кухню
+                        </button>
+                        <button type="button" class="btn-st btn-st-delivering" onclick="updateOrderStatus(4, 'delivering')" title="Передати курʼєру">
+                            🛵 В дорогу
+                        </button>
+                        <button type="button" class="btn-st btn-st-completed" onclick="updateOrderStatus(4, 'completed')" title="Позначити виконаним">
+                            ✅ Виконано
+                        </button>
+                        <button type="button" class="btn-st btn-st-cancel" onclick="updateOrderStatus(4, 'cancelled')" title="Скасувати замовлення">
+                            ❌
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="crm-order-card status-cooking" id="orderRow-3" data-status="cooking" data-search="bm-2fba96 тестовий клієнт +380981112233">
+                <div class="order-card-header">
+                    <div class="order-header-main">
+                        <strong class="order-code">#BM-2FBA96</strong>
+                        <span class="order-datetime">17.11.2026 21:27</span>
+                        <span class="badge-delivery-type">🛵 Доставка курʼєром по Тернополю</span>
+                    </div>
+                    <div class="order-header-status">
+                        <span class="status-indicator status-pill-cooking" id="statusBadge-3">
+                            Готується на кухні
+                        </span>
+                    </div>
+                </div>
+
+                <div class="order-card-body">
+                    <!-- Client & Delivery Info -->
+                    <div class="order-client-grid">
+                        <div class="oc-col">
+                            <span class="oc-label">Клієнт:</span>
+                            <strong class="oc-val">Тестовий Клієнт</strong>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Телефон:</span>
+                            <a href="tel:+380981112233" class="oc-phone-link">📞 +380981112233</a>
+                        </div>
+                        <div class="oc-col oc-wide">
+                            <span class="oc-label">Адреса / Локація:</span>
+                            <span class="oc-val">
+                                
+                                    🛵 вул. Руська, 15, кв. 4
+                                
+                            </span>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Оплата:</span>
+                            <span class="oc-payment-val">💳 Карткою онлайн (LiqPay / Apple Pay)</span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="order-comment-box">
+                        <span class="comm-icon">💬</span>
+                        <em>"Тест перевірки"</em>
+                    </div>
+                    
+
+                    <!-- Items Composition -->
+                    <div class="order-items-accordion">
+                        <div class="items-head">
+                            <span>Склад замовлення (1 поз.):</span>
+                        </div>
+                        <ul class="order-items-table">
+                            
+                            <li class="oit-row">
+                                <span class="oit-name">Сирники з карамеллю та сметаною</span>
+                                <span class="oit-qty">2 × 175 ₴</span>
+                                <strong class="oit-total">350 ₴</strong>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="order-card-footer">
+                    <div class="order-total-block">
+                        <span class="ot-lbl">До сплати:</span>
+                        <strong class="ot-amount">350 ₴</strong>
+                    </div>
+
+                    <!-- Instant Status Controls -->
+                    <div class="status-action-btns">
+                        <button type="button" class="btn-st btn-st-cooking" onclick="updateOrderStatus(3, 'cooking')" title="Передати на кухню">
+                            🍳 На кухню
+                        </button>
+                        <button type="button" class="btn-st btn-st-delivering" onclick="updateOrderStatus(3, 'delivering')" title="Передати курʼєру">
+                            🛵 В дорогу
+                        </button>
+                        <button type="button" class="btn-st btn-st-completed" onclick="updateOrderStatus(3, 'completed')" title="Позначити виконаним">
+                            ✅ Виконано
+                        </button>
+                        <button type="button" class="btn-st btn-st-cancel" onclick="updateOrderStatus(3, 'cancelled')" title="Скасувати замовлення">
+                            ❌
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="crm-order-card status-new" id="orderRow-2" data-status="new" data-search="bm-test01 катерина коваль +38 (098) 765-43-21">
+                <div class="order-card-header">
+                    <div class="order-header-main">
+                        <strong class="order-code">#BM-TEST01</strong>
+                        <span class="order-datetime">17.11.2026 19:32</span>
+                        <span class="badge-delivery-type">🛎️ До столика в залі</span>
+                    </div>
+                    <div class="order-header-status">
+                        <span class="status-indicator status-pill-new" id="statusBadge-2">
+                            Нове замовлення
+                        </span>
+                    </div>
+                </div>
+
+                <div class="order-card-body">
+                    <!-- Client & Delivery Info -->
+                    <div class="order-client-grid">
+                        <div class="oc-col">
+                            <span class="oc-label">Клієнт:</span>
+                            <strong class="oc-val">Катерина Коваль</strong>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Телефон:</span>
+                            <a href="tel:+38 (098) 765-43-21" class="oc-phone-link">📞 +38 (098) 765-43-21</a>
+                        </div>
+                        <div class="oc-col oc-wide">
+                            <span class="oc-label">Адреса / Локація:</span>
+                            <span class="oc-val">
+                                
+                                    🏛️ <strong>Столик в залі: Стіл #4 (Склепіння)</strong>
+                                
+                            </span>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Оплата:</span>
+                            <span class="oc-payment-val">terminal</span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="order-comment-box">
+                        <span class="comm-icon">💬</span>
+                        <em>"Свічки на стіл, будь ласка"</em>
+                    </div>
+                    
+
+                    <!-- Items Composition -->
+                    <div class="order-items-accordion">
+                        <div class="items-head">
+                            <span>Склад замовлення (0 поз.):</span>
+                        </div>
+                        <ul class="order-items-table">
+                            
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="order-card-footer">
+                    <div class="order-total-block">
+                        <span class="ot-lbl">До сплати:</span>
+                        <strong class="ot-amount">890 ₴</strong>
+                    </div>
+
+                    <!-- Instant Status Controls -->
+                    <div class="status-action-btns">
+                        <button type="button" class="btn-st btn-st-cooking" onclick="updateOrderStatus(2, 'cooking')" title="Передати на кухню">
+                            🍳 На кухню
+                        </button>
+                        <button type="button" class="btn-st btn-st-delivering" onclick="updateOrderStatus(2, 'delivering')" title="Передати курʼєру">
+                            🛵 В дорогу
+                        </button>
+                        <button type="button" class="btn-st btn-st-completed" onclick="updateOrderStatus(2, 'completed')" title="Позначити виконаним">
+                            ✅ Виконано
+                        </button>
+                        <button type="button" class="btn-st btn-st-cancel" onclick="updateOrderStatus(2, 'cancelled')" title="Скасувати замовлення">
+                            ❌
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="crm-order-card status-cooking" id="orderRow-1" data-status="cooking" data-search="bm-a1b2c3 олександр мельник +38 (067) 345-67-89">
+                <div class="order-card-header">
+                    <div class="order-header-main">
+                        <strong class="order-code">#BM-A1B2C3</strong>
+                        <span class="order-datetime">17.11.2026 19:32</span>
+                        <span class="badge-delivery-type">🛵 Доставка курʼєром по Тернополю</span>
+                    </div>
+                    <div class="order-header-status">
+                        <span class="status-indicator status-pill-cooking" id="statusBadge-1">
+                            Готується на кухні
+                        </span>
+                    </div>
+                </div>
+
+                <div class="order-card-body">
+                    <!-- Client & Delivery Info -->
+                    <div class="order-client-grid">
+                        <div class="oc-col">
+                            <span class="oc-label">Клієнт:</span>
+                            <strong class="oc-val">Олександр Мельник</strong>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Телефон:</span>
+                            <a href="tel:+38 (067) 345-67-89" class="oc-phone-link">📞 +38 (067) 345-67-89</a>
+                        </div>
+                        <div class="oc-col oc-wide">
+                            <span class="oc-label">Адреса / Локація:</span>
+                            <span class="oc-val">
+                                
+                                    🛵 вул. Руська, 17, кв. 12
+                                
+                            </span>
+                        </div>
+                        <div class="oc-col">
+                            <span class="oc-label">Оплата:</span>
+                            <span class="oc-payment-val">💳 Терміналом курʼєру</span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="order-comment-box">
+                        <span class="comm-icon">💬</span>
+                        <em>"Домофон 12К, зателефонувати за 10 хв"</em>
+                    </div>
+                    
+
+                    <!-- Items Composition -->
+                    <div class="order-items-accordion">
+                        <div class="items-head">
+                            <span>Склад замовлення (1 поз.):</span>
+                        </div>
+                        <ul class="order-items-table">
+                            
+                            <li class="oit-row">
+                                <span class="oit-name">Бургер з куркою</span>
+                                <span class="oit-qty">2 × 285 ₴</span>
+                                <strong class="oit-total">570 ₴</strong>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="order-card-footer">
+                    <div class="order-total-block">
+                        <span class="ot-lbl">До сплати:</span>
+                        <strong class="ot-amount">1420 ₴</strong>
+                    </div>
+
+                    <!-- Instant Status Controls -->
+                    <div class="status-action-btns">
+                        <button type="button" class="btn-st btn-st-cooking" onclick="updateOrderStatus(1, 'cooking')" title="Передати на кухню">
+                            🍳 На кухню
+                        </button>
+                        <button type="button" class="btn-st btn-st-delivering" onclick="updateOrderStatus(1, 'delivering')" title="Передати курʼєру">
+                            🛵 В дорогу
+                        </button>
+                        <button type="button" class="btn-st btn-st-completed" onclick="updateOrderStatus(1, 'completed')" title="Позначити виконаним">
+                            ✅ Виконано
+                        </button>
+                        <button type="button" class="btn-st btn-st-cancel" onclick="updateOrderStatus(1, 'cancelled')" title="Скасувати замовлення">
+                            ❌
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 2: TABLE RESERVATIONS
+         ========================================================================= -->
+    <div class="crm-tab-panel" id="panel-reservations">
+        <div class="crm-table-wrapper">
+            <table class="crm-data-table">
+                <thead>
+                    <tr>
+                        <th>Гість</th>
+                        <th>Телефон</th>
+                        <th>Дата та Час</th>
+                        <th>Гостей</th>
+                        <th>Зона закладу</th>
+                        <th>Побажання / Привід</th>
+                        <th>Статус</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr id="resRow-4">
+                        <td><strong>Оксана Тест</strong></td>
+                        <td><a href="tel:+380971234567" class="oc-phone-link">📞 +380971234567</a></td>
+                        <td>
+                            <strong class="res-date">20.11.2026</strong>
+                            <span class="res-time">19:00</span>
+                        </td>
+                        <td><span class="badge-guests">👥 4</span></td>
+                        <td>🏛️ Головний зал (Підвал-склепіння)</td>
+                        <td><small>[Обрано на схемі: Стіл #2]</small></td>
+                        <td>
+                            <span class="status-pill status-pill-new" id="resStatusBadge-4">
+                                Нова заявка
+                            </span>
+                        </td>
+                        <td>
+                            <div class="res-actions">
+                                <button type="button" class="btn-sm-action btn-act-approve" onclick="updateReservationStatus(4, 'confirmed')" title="Підтвердити">
+                                    ✅
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-done" onclick="updateReservationStatus(4, 'completed')" title="Завершено">
+                                    🏁
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-cancel" onclick="updateReservationStatus(4, 'cancelled')" title="Скасувати">
+                                    ❌
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr id="resRow-3">
+                        <td><strong>IT Команда Ternopil Tech</strong></td>
+                        <td><a href="tel:+38 (063) 555-44-33" class="oc-phone-link">📞 +38 (063) 555-44-33</a></td>
+                        <td>
+                            <strong class="res-date">18.11.2026</strong>
+                            <span class="res-time">18:00</span>
+                        </td>
+                        <td><span class="badge-guests">👥 8</span></td>
+                        <td>🎤 Караоке-зал</td>
+                        <td><small>Корпоратив після релізу проекту, потрібні мікрофони.</small></td>
+                        <td>
+                            <span class="status-pill status-pill-pending" id="resStatusBadge-3">
+                                pending
+                            </span>
+                        </td>
+                        <td>
+                            <div class="res-actions">
+                                <button type="button" class="btn-sm-action btn-act-approve" onclick="updateReservationStatus(3, 'confirmed')" title="Підтвердити">
+                                    ✅
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-done" onclick="updateReservationStatus(3, 'completed')" title="Завершено">
+                                    🏁
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-cancel" onclick="updateReservationStatus(3, 'cancelled')" title="Скасувати">
+                                    ❌
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr id="resRow-2">
+                        <td><strong>Вікторія та Сергій</strong></td>
+                        <td><a href="tel:+38 (097) 987-65-43" class="oc-phone-link">📞 +38 (097) 987-65-43</a></td>
+                        <td>
+                            <strong class="res-date">17.11.2026</strong>
+                            <span class="res-time">20:00</span>
+                        </td>
+                        <td><span class="badge-guests">👥 2</span></td>
+                        <td>🛋️ VIP Lounge &amp; Кальяни</td>
+                        <td><small>Романтична вечеря, камін, кальян Wookah.</small></td>
+                        <td>
+                            <span class="status-pill status-pill-confirmed" id="resStatusBadge-2">
+                                Підтверджено
+                            </span>
+                        </td>
+                        <td>
+                            <div class="res-actions">
+                                <button type="button" class="btn-sm-action btn-act-approve" onclick="updateReservationStatus(2, 'confirmed')" title="Підтвердити">
+                                    ✅
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-done" onclick="updateReservationStatus(2, 'completed')" title="Завершено">
+                                    🏁
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-cancel" onclick="updateReservationStatus(2, 'cancelled')" title="Скасувати">
+                                    ❌
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr id="resRow-1">
+                        <td><strong>Ярослав Дмитренко</strong></td>
+                        <td><a href="tel:+38 (050) 123-45-67" class="oc-phone-link">📞 +38 (050) 123-45-67</a></td>
+                        <td>
+                            <strong class="res-date">17.11.2026</strong>
+                            <span class="res-time">19:30</span>
+                        </td>
+                        <td><span class="badge-guests">👥 4</span></td>
+                        <td>🏛️ Головний зал (Підвал-склепіння)</td>
+                        <td><small>День народження. Бажано біля сцени.</small></td>
+                        <td>
+                            <span class="status-pill status-pill-confirmed" id="resStatusBadge-1">
+                                Підтверджено
+                            </span>
+                        </td>
+                        <td>
+                            <div class="res-actions">
+                                <button type="button" class="btn-sm-action btn-act-approve" onclick="updateReservationStatus(1, 'confirmed')" title="Підтвердити">
+                                    ✅
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-done" onclick="updateReservationStatus(1, 'completed')" title="Завершено">
+                                    🏁
+                                </button>
+                                <button type="button" class="btn-sm-action btn-act-cancel" onclick="updateReservationStatus(1, 'cancelled')" title="Скасувати">
+                                    ❌
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 3: MENU MANAGEMENT & STOP-LIST
+         ========================================================================= -->
+    <div class="crm-tab-panel" id="panel-menu">
+        <div class="menu-tab-topbar">
+            <div>
+                <h3>Каталог страв ресторану (66)</h3>
+                <p class="text-muted">Керуйте наявністю страв на кухні (Стоп-лист) в один клік</p>
+            </div>
+            <button type="button" class="btn btn-gold" onclick="openNewDishModal()">
+                + Створити нову страву
+            </button>
+        </div>
+
+        <div class="crm-menu-grid">
+            
+            <div class="crm-menu-card is-stopped" id="menuCard-190">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_DGFIw-ZbpIH-bwkgU.jpeg" alt="Мʼясний сет з овочами">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Сет-меню Суші</span>
+                    <h4 class="cmc-title">Мʼясний сет з овочами</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">1320 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle " 
+                            id="stopBtn-190" 
+                            onclick="toggleStopList(190)">
+                        
+                        ⛔ Стоп-лист
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-142">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_QLCXu-zSGHC-AjuKJ.jpeg" alt="Сет Сакура">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Сет-меню Суші</span>
+                    <h4 class="cmc-title">Сет Сакура</h4>
+                    <span class="cmc-weight">850-1200 г</span>
+                    <strong class="cmc-price">980 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-142" 
+                            onclick="toggleStopList(142)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-143">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_HcOGb-CHSGG-Odquk.jpeg" alt="Сет Токіо мікс">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Сет-меню Суші</span>
+                    <h4 class="cmc-title">Сет Токіо мікс</h4>
+                    <span class="cmc-weight">850-1200 г</span>
+                    <strong class="cmc-price">1250 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-143" 
+                            onclick="toggleStopList(143)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-158">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_cJHeI-yUTQY-FLTUz.jpeg" alt="Сет брускет">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Сет-меню Суші</span>
+                    <h4 class="cmc-title">Сет брускет</h4>
+                    <span class="cmc-weight">850-1200 г</span>
+                    <strong class="cmc-price">250 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-158" 
+                            onclick="toggleStopList(158)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-141">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_xNBAH-YLPlI-ZnfPy.jpeg" alt="Сет роял">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Сет-меню Суші</span>
+                    <h4 class="cmc-title">Сет роял</h4>
+                    <span class="cmc-weight">850-1200 г</span>
+                    <strong class="cmc-price">1050 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-141" 
+                            onclick="toggleStopList(141)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-149">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_TlTdD-HzoqL-DBwhS.jpeg" alt="Green roll з копченим лососем">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Green roll з копченим лососем</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">410 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-149" 
+                            onclick="toggleStopList(149)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-147">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_lPOgl-ibayV-qjWxt.jpeg" alt="Pink Samurai">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Pink Samurai</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">425 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-147" 
+                            onclick="toggleStopList(147)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-156">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_GxNXc-FYDWW-khKOw.png" alt="Каліфорнія з лососем">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Каліфорнія з лососем</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">280 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-156" 
+                            onclick="toggleStopList(156)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-144">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_hguHy-kYFQk-TkJFR.jpeg" alt="Каліфорнія спайсі з креветкою">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Каліфорнія спайсі з креветкою</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">275 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-144" 
+                            onclick="toggleStopList(144)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-155">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_WKTVk-iDGIH-VsLpP.jpeg" alt="Канада з тар-таром">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Канада з тар-таром</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">350 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-155" 
+                            onclick="toggleStopList(155)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-146">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_KIlJC-Myyuz-IoSyC.jpeg" alt="Креветка фламбе">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Креветка фламбе</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">345 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-146" 
+                            onclick="toggleStopList(146)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-148">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_CHLBJ-tbCGA-ryyGq.jpeg" alt="Сирний рол">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Сирний рол</h4>
+                    <span class="cmc-weight">280-340 г</span>
+                    <strong class="cmc-price">260 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-148" 
+                            onclick="toggleStopList(148)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-145">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_KuJJM-tDyiv-NQTao.jpeg" alt="Футо з вугрем">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Футо з вугрем</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">320 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-145" 
+                            onclick="toggleStopList(145)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-150">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_GmGab-PHZbI-batvZ.jpeg" alt="Філадельфія Дабл">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Філадельфія Дабл</h4>
+                    <span class="cmc-weight">280-340 г</span>
+                    <strong class="cmc-price">480 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-150" 
+                            onclick="toggleStopList(150)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-154">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_bGktE-usSmk-OXSDc.png" alt="Філадельфія з вугрем">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Філадельфія з вугрем</h4>
+                    <span class="cmc-weight">280-340 г</span>
+                    <strong class="cmc-price">415 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-154" 
+                            onclick="toggleStopList(154)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-153">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_FzcCH-CWeGV-Fpeek.jpeg" alt="Філадельфія з копченим лососем">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Філадельфія з копченим лососем</h4>
+                    <span class="cmc-weight">280-340 г</span>
+                    <strong class="cmc-price">385 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-153" 
+                            onclick="toggleStopList(153)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-152">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_Fspyg-JJUsb-QFFBk.png" alt="Філадельфія з креветкою">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Філадельфія з креветкою</h4>
+                    <span class="cmc-weight">280-340 г</span>
+                    <strong class="cmc-price">380 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-152" 
+                            onclick="toggleStopList(152)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-151">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_aFHql-Jhcgx-SkCXl.jpeg" alt="Філадельфія з лососем">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Роли та Суші</span>
+                    <h4 class="cmc-title">Філадельфія з лососем</h4>
+                    <span class="cmc-weight">280-340 г</span>
+                    <strong class="cmc-price">350 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-151" 
+                            onclick="toggleStopList(151)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-193">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_PFENb-Qbift-rcHUJ.jpeg" alt="Бургер з куркою">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Бургери</span>
+                    <h4 class="cmc-title">Бургер з куркою</h4>
+                    <span class="cmc-weight">380 г + фрі</span>
+                    <strong class="cmc-price">285 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-193" 
+                            onclick="toggleStopList(193)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-195">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_lukUm-xSZem-YaIQB.jpeg" alt="Бургер з свининою-телятиною">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Бургери</span>
+                    <h4 class="cmc-title">Бургер з свининою-телятиною</h4>
+                    <span class="cmc-weight">380 г + фрі</span>
+                    <strong class="cmc-price">295 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-195" 
+                            onclick="toggleStopList(195)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-194">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_hFbIe-xoWgS-MFrGO.jpeg" alt="Бургер свинина барбекю">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Бургери</span>
+                    <h4 class="cmc-title">Бургер свинина барбекю</h4>
+                    <span class="cmc-weight">380 г + фрі</span>
+                    <strong class="cmc-price">290 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-194" 
+                            onclick="toggleStopList(194)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-191">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_ebPcI-MwSGQ-SFINU.jpeg" alt="Карбонара">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Паста</span>
+                    <h4 class="cmc-title">Карбонара</h4>
+                    <span class="cmc-weight">300 г</span>
+                    <strong class="cmc-price">215 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-191" 
+                            onclick="toggleStopList(191)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-192">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_cZXCS-tAjpG-sJBCp.jpeg" alt="Паста з лососем">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Паста</span>
+                    <h4 class="cmc-title">Паста з лососем</h4>
+                    <span class="cmc-weight">300 г</span>
+                    <strong class="cmc-price">360 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-192" 
+                            onclick="toggleStopList(192)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-185">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_uHteE-SaIIz-JDQSK.jpeg" alt="Деруни з грибами">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Основні страви</span>
+                    <h4 class="cmc-title">Деруни з грибами</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">175 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-185" 
+                            onclick="toggleStopList(185)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-186">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_lTYqk-bllFD-clkNp.jpeg" alt="Деруни з лососем">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Основні страви</span>
+                    <h4 class="cmc-title">Деруни з лососем</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">275 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-186" 
+                            onclick="toggleStopList(186)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-184">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_TARgl-dBJCZ-FGBHH.jpeg" alt="Запечене філе свинини з овочевим соте">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Основні страви</span>
+                    <h4 class="cmc-title">Запечене філе свинини з овочевим соте</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">280 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-184" 
+                            onclick="toggleStopList(184)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-183">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_xJAyn-BleVF-byOkC.jpeg" alt="Лосось в сирній ванні">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Основні страви</span>
+                    <h4 class="cmc-title">Лосось в сирній ванні</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">420 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-183" 
+                            onclick="toggleStopList(183)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-187">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_xOIrX-JJhNb-qHzyk.jpeg" alt="Сковорідка  з мисливськими ковбасками">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Основні страви</span>
+                    <h4 class="cmc-title">Сковорідка  з мисливськими ковбасками</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">230 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-187" 
+                            onclick="toggleStopList(187)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-188">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_bxRqE-DZDxb-hCfCy.jpeg" alt="Сковорідка  зі свининою  по-домашньому">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Основні страви</span>
+                    <h4 class="cmc-title">Сковорідка  зі свининою  по-домашньому</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">290 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-188" 
+                            onclick="toggleStopList(188)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-189">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_JcUsF-djihe-plCEg.jpeg" alt="Сковорідка з куркою і грибами">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Основні страви</span>
+                    <h4 class="cmc-title">Сковорідка з куркою і грибами</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">265 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-189" 
+                            onclick="toggleStopList(189)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-165">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_KbRSJ-ipsbC-SbSDa.jpeg" alt="Грецький">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Салати</span>
+                    <h4 class="cmc-title">Грецький</h4>
+                    <span class="cmc-weight">250-320 г</span>
+                    <strong class="cmc-price">185 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-165" 
+                            onclick="toggleStopList(165)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-164">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_EZuLt-gvNZA-XuFtE.jpeg" alt="Салат Хлопський">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Салати</span>
+                    <h4 class="cmc-title">Салат Хлопський</h4>
+                    <span class="cmc-weight">250-320 г</span>
+                    <strong class="cmc-price">250 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-164" 
+                            onclick="toggleStopList(164)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-169">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_GRqXD-BAuuY-wTWxJ.jpeg" alt="Салат з лососем">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Салати</span>
+                    <h4 class="cmc-title">Салат з лососем</h4>
+                    <span class="cmc-weight">250-320 г</span>
+                    <strong class="cmc-price">345 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-169" 
+                            onclick="toggleStopList(169)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-168">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_JFQAN-ZACIt-nCYar.jpeg" alt="Салат з прошуто">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Салати</span>
+                    <h4 class="cmc-title">Салат з прошуто</h4>
+                    <span class="cmc-weight">250-320 г</span>
+                    <strong class="cmc-price">275 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-168" 
+                            onclick="toggleStopList(168)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-167">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_WOeRh-pTYGl-HQEJb.jpeg" alt="Салат зі свинини">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Салати</span>
+                    <h4 class="cmc-title">Салат зі свинини</h4>
+                    <span class="cmc-weight">250-320 г</span>
+                    <strong class="cmc-price">265 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-167" 
+                            onclick="toggleStopList(167)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-170">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_lhCqV-jqEHZ-ZDcOV.jpeg" alt="Цезар з креветкою">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Салати</span>
+                    <h4 class="cmc-title">Цезар з креветкою</h4>
+                    <span class="cmc-weight">250-320 г</span>
+                    <strong class="cmc-price">365 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-170" 
+                            onclick="toggleStopList(170)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-166">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_gxBkZ-AVCuN-qnUCA.jpeg" alt="Цезар з куркою">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Салати</span>
+                    <h4 class="cmc-title">Цезар з куркою</h4>
+                    <span class="cmc-weight">250-320 г</span>
+                    <strong class="cmc-price">285 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-166" 
+                            onclick="toggleStopList(166)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-157">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_cXHxZ-qDlkD-wdijX.jpeg" alt="Начос з гуакамоле">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Холодні закуски</span>
+                    <h4 class="cmc-title">Начос з гуакамоле</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">185 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-157" 
+                            onclick="toggleStopList(157)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-162">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_dfzIJ-GcuXH-mxDSH.jpeg" alt="Овочеве асорті">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Холодні закуски</span>
+                    <h4 class="cmc-title">Овочеве асорті</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">175 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-162" 
+                            onclick="toggleStopList(162)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-179">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_VplDF-SCVoe-nBSxi.png" alt="Плато фрі">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Холодні закуски</span>
+                    <h4 class="cmc-title">Плато фрі</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">595 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-179" 
+                            onclick="toggleStopList(179)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-159">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_YEjix-JBRTd-uCKzL.jpeg" alt="Сирне плато">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Холодні закуски</span>
+                    <h4 class="cmc-title">Сирне плато</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">395 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-159" 
+                            onclick="toggleStopList(159)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-161">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_OWNJD-lvZuN-vUqDl.jpeg" alt="Сиро-вʼялене плато">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Холодні закуски</span>
+                    <h4 class="cmc-title">Сиро-вʼялене плато</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">395 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-161" 
+                            onclick="toggleStopList(161)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-160">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_IGEgU-lMzFu-Dodpv.png" alt="Тар-тар з лосося">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Холодні закуски</span>
+                    <h4 class="cmc-title">Тар-тар з лосося</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">390 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-160" 
+                            onclick="toggleStopList(160)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-163">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_KUvGf-jThEt-quwwF.jpeg" alt="Фруктова нарізка">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Холодні закуски</span>
+                    <h4 class="cmc-title">Фруктова нарізка</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">580 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-163" 
+                            onclick="toggleStopList(163)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-173">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_CuRsi-PFnFB-VhRgJ.jpeg" alt="Батат з пармезаном">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Батат з пармезаном</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">205 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-173" 
+                            onclick="toggleStopList(173)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-174">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_xiILF-kmDQO-SDxQs.jpeg" alt="Камамбер запечений з ягідним соусом">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Камамбер запечений з ягідним соусом</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">275 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-174" 
+                            onclick="toggleStopList(174)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-172">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_sTPml-DWvCf-fKJgS.jpeg" alt="Картопля фрі">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Картопля фрі</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">95 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-172" 
+                            onclick="toggleStopList(172)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-171">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_dYozG-FgoxY-JGvjj.jpeg" alt="Кесадилья з куркою">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Кесадилья з куркою</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">245 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-171" 
+                            onclick="toggleStopList(171)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-178">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_FHpJF-GoNok-Aelre.jpeg" alt="Крила в гострому соусі">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Крила в гострому соусі</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">160 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-178" 
+                            onclick="toggleStopList(178)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-180">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_AHDld-MHOjb-LVblg.jpeg" alt="Лаваш з моцарелою та вʼяленими томатами">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Лаваш з моцарелою та вʼяленими томатами</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">165 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-180" 
+                            onclick="toggleStopList(180)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-176">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_PdCkr-vaxMw-GeGyC.jpeg" alt="Моцарела фрі міні">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Моцарела фрі міні</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">225 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-176" 
+                            onclick="toggleStopList(176)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-177">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_XTcVG-kyWJJ-PDHyZ.jpeg" alt="Нагетси">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Нагетси</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">145 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-177" 
+                            onclick="toggleStopList(177)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-175">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_hRgSr-JWJon-CIOdw.jpeg" alt="Печена картопля">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Печена картопля</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">120 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-175" 
+                            onclick="toggleStopList(175)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-181">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_icyPr-wyfeH-DUpKN.jpeg" alt="Сирні палички">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Сирні палички</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">220 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-181" 
+                            onclick="toggleStopList(181)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-182">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_UgFWH-RMoVI-fFzeI.jpeg" alt="Цибулеві кільця">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Гарячі закуски</span>
+                    <h4 class="cmc-title">Цибулеві кільця</h4>
+                    <span class="cmc-weight">250-350 г</span>
+                    <strong class="cmc-price">125 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-182" 
+                            onclick="toggleStopList(182)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-202">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://images.unsplash.com/photo-1560512823-829485b8bf24?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Aperol Spritz Grande">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Коктейлі &amp; Бар</span>
+                    <h4 class="cmc-title">Aperol Spritz Grande</h4>
+                    <span class="cmc-weight">250 мл</span>
+                    <strong class="cmc-price">240 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-202" 
+                            onclick="toggleStopList(202)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-203">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Bunker Craft IPA Draft">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Коктейлі &amp; Бар</span>
+                    <h4 class="cmc-title">Bunker Craft IPA Draft</h4>
+                    <span class="cmc-weight">500 мл</span>
+                    <strong class="cmc-price">130 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-203" 
+                            onclick="toggleStopList(203)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-199">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Bunker Smoked Negroni">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Коктейлі &amp; Бар</span>
+                    <h4 class="cmc-title">Bunker Smoked Negroni</h4>
+                    <span class="cmc-weight">120 мл</span>
+                    <strong class="cmc-price">280 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-199" 
+                            onclick="toggleStopList(199)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-200">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Pornstar Passion Martini">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Коктейлі &amp; Бар</span>
+                    <h4 class="cmc-title">Pornstar Passion Martini</h4>
+                    <span class="cmc-weight">160 мл + 40 мл Prosecco</span>
+                    <strong class="cmc-price">270 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-200" 
+                            onclick="toggleStopList(200)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-201">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Whiskey Sour Oak Barrel">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Коктейлі &amp; Бар</span>
+                    <h4 class="cmc-title">Whiskey Sour Oak Barrel</h4>
+                    <span class="cmc-weight">150 мл</span>
+                    <strong class="cmc-price">250 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-201" 
+                            onclick="toggleStopList(201)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-204">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Кальян Classic Smoke">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Кальяни</span>
+                    <h4 class="cmc-title">Кальян Classic Smoke</h4>
+                    <span class="cmc-weight">Чаша глиняна</span>
+                    <strong class="cmc-price">390 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-204" 
+                            onclick="toggleStopList(204)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-206">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Кальян Dark Strong Elite">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Кальяни</span>
+                    <h4 class="cmc-title">Кальян Dark Strong Elite</h4>
+                    <span class="cmc-weight">Чаша глазурована</span>
+                    <strong class="cmc-price">540 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-206" 
+                            onclick="toggleStopList(206)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-205">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Кальян Premium Medium">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Кальяни</span>
+                    <h4 class="cmc-title">Кальян Premium Medium</h4>
+                    <span class="cmc-weight">Чаша Phunnel / Classic</span>
+                    <strong class="cmc-price">460 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-205" 
+                            onclick="toggleStopList(205)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-197">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_ikprT-rpnRJ-DbUIM.jpeg" alt="Млинці з сиром , яблуком і корицею">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Десерти</span>
+                    <h4 class="cmc-title">Млинці з сиром , яблуком і корицею</h4>
+                    <span class="cmc-weight">220 г</span>
+                    <strong class="cmc-price">175 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-197" 
+                            onclick="toggleStopList(197)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-198">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_tWUmH-zFGYz-lRmRt.jpeg" alt="Млинці з сиром і полуницею">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Десерти</span>
+                    <h4 class="cmc-title">Млинці з сиром і полуницею</h4>
+                    <span class="cmc-weight">220 г</span>
+                    <strong class="cmc-price">175 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-198" 
+                            onclick="toggleStopList(198)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-menu-card " id="menuCard-196">
+                <div class="cmc-thumb">
+                    
+                    <img src="https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/menu/thumbnail_sEPzF-VFgbD-vYbzo.jpeg" alt="Сирники з карамеллю та сметаною">
+                    
+                </div>
+                <div class="cmc-content">
+                    <span class="cmc-category">Десерти</span>
+                    <h4 class="cmc-title">Сирники з карамеллю та сметаною</h4>
+                    <span class="cmc-weight">220 г</span>
+                    <strong class="cmc-price">175 ₴</strong>
+                </div>
+                <div class="cmc-footer">
+                    <button type="button" class="btn-stoplist-toggle active" 
+                            id="stopBtn-196" 
+                            onclick="toggleStopList(196)">
+                        
+                        ✅ В наявності
+                        
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 4: EVENTS
+         ========================================================================= -->
+    <div class="crm-tab-panel" id="panel-events">
+        <div class="events-crm-grid">
+            
+            <div class="crm-event-card">
+                <div class="cec-img">
+                    <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Underground Techno &amp; House Night: DJ Alex Neo">
+                    <span class="cec-badge">DJ SET / PARTY</span>
+                </div>
+                <div class="cec-body">
+                    <span class="cec-date">📅 19.11.2026 22:50</span>
+                    <h4>Underground Techno &amp; House Night: DJ Alex Neo</h4>
+                    <p>Атмосферний сет електронної музики під історичними цегляними склепіннями Бункермуз. Потужний звук, світлове шоу та фірм…</p>
+                    <strong>Квиток: 200 грн (депозит)</strong>
+                </div>
+            </div>
+            
+            <div class="crm-event-card">
+                <div class="cec-img">
+                    <img src="https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Вечір Живого Джазу: Midnight Quartet">
+                    <span class="cec-badge">LIVE JAZZ</span>
+                </div>
+                <div class="cec-body">
+                    <span class="cec-date">📅 22.11.2026 21:50</span>
+                    <h4>Вечір Живого Джазу: Midnight Quartet</h4>
+                    <p>Саксофон, контрабас, рояль та оксамитовий вокал. Ідеальний вечір для побачень, смачної вечері та келиха вина.</p>
+                    <strong>Квиток: Вхід вільний</strong>
+                </div>
+            </div>
+            
+            <div class="crm-event-card">
+                <div class="cec-img">
+                    <img src="https://images.unsplash.com/photo-1585699324551-f6c309eedeca?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Великий Стендап: Підпільний Гумор">
+                    <span class="cec-badge">STAND-UP COMEDY</span>
+                </div>
+                <div class="cec-body">
+                    <span class="cec-date">📅 26.11.2026 20:50</span>
+                    <h4>Великий Стендап: Підпільний Гумор</h4>
+                    <p>Гострий, чесний та сміливий український гумор від найкращих коміків заходу України. Кількість місць обмежена!</p>
+                    <strong>Квиток: 300 грн</strong>
+                </div>
+            </div>
+            
+            <div class="crm-event-card">
+                <div class="cec-img">
+                    <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Караоке Батл: Голос Бункера">
+                    <span class="cec-badge">KARAOKE CHAMPIONSHIP</span>
+                </div>
+                <div class="cec-body">
+                    <span class="cec-date">📅 29.11.2026 23:50</span>
+                    <h4>Караоке Батл: Голос Бункера</h4>
+                    <p>Професійна акустика Evolution Pro 2, бек-вокал, звукорежисер та призовий фонд для найкращого виконавця вечора.</p>
+                    <strong>Квиток: Вхід вільний (депозит столу)</strong>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 5: REVIEWS MODERATION
+         ========================================================================= -->
+    <div class="crm-tab-panel" id="panel-reviews">
+        <div class="crm-reviews-list">
+            
+            <div class="crm-review-row" id="revRow-17">
+                <div class="crr-meta">
+                    <strong>Сергій</strong>
+                    <span class="crr-stars">5★</span>
+                    <small class="crr-date">17.11.2026 21:27 &middot; Сайт Бункермуз</small>
+                </div>
+                <p class="crr-text">Неймовірний сервіс та авторські коктейлі!</p>
+                <div class="crr-actions">
+                    <button type="button" class="btn-sm-action" onclick="toggleReview(17, 'toggle')">
+                        🟢 Опубліковано
+                    </button>
+                    <button type="button" class="btn-sm-action btn-act-cancel" onclick="toggleReview(17, 'delete')">
+                        Видалити 🗑️
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-review-row" id="revRow-16">
+                <div class="crr-meta">
+                    <strong>Ірина Гончарук</strong>
+                    <span class="crr-stars">5★</span>
+                    <small class="crr-date">17.11.2026 18:50 &middot; Google Reviews</small>
+                </div>
+                <p class="crr-text">Доставка приїхала за 35 хвилин, все гаряче, упаковано з турботою. Бургери соковиті, картопля хрустка, соуси натуральні. Дякую за сервіс європейського рівня!</p>
+                <div class="crr-actions">
+                    <button type="button" class="btn-sm-action" onclick="toggleReview(16, 'toggle')">
+                        🟢 Опубліковано
+                    </button>
+                    <button type="button" class="btn-sm-action btn-act-cancel" onclick="toggleReview(16, 'delete')">
+                        Видалити 🗑️
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-review-row" id="revRow-15">
+                <div class="crr-meta">
+                    <strong>Дмитро Васильченко</strong>
+                    <span class="crr-stars">5★</span>
+                    <small class="crr-date">17.11.2026 18:50 &middot; TripAdvisor</small>
+                </div>
+                <p class="crr-text">Приїжджав до Тернополя у справах, друзі порадили Бункермуз на Шевченка, 1. Стейк та лосось у сирній ванні — це гастрономічний шок! Обовʼязково завітайте, якщо цінуєте якість.</p>
+                <div class="crr-actions">
+                    <button type="button" class="btn-sm-action" onclick="toggleReview(15, 'toggle')">
+                        🟢 Опубліковано
+                    </button>
+                    <button type="button" class="btn-sm-action btn-act-cancel" onclick="toggleReview(15, 'delete')">
+                        Видалити 🗑️
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-review-row" id="revRow-14">
+                <div class="crr-meta">
+                    <strong>Марія Мельник</strong>
+                    <span class="crr-stars">5★</span>
+                    <small class="crr-date">17.11.2026 18:50 &middot; Instagram</small>
+                </div>
+                <p class="crr-text">Святкували день народження у VIP-залі. Обслуговування на висоті, їжа неймовірна, кальяни мʼякі та димні. Дуже зручно, що тепер можна замовити і стіл забронювати прямо з сайту!</p>
+                <div class="crr-actions">
+                    <button type="button" class="btn-sm-action" onclick="toggleReview(14, 'toggle')">
+                        🟢 Опубліковано
+                    </button>
+                    <button type="button" class="btn-sm-action btn-act-cancel" onclick="toggleReview(14, 'delete')">
+                        Видалити 🗑️
+                    </button>
+                </div>
+            </div>
+            
+            <div class="crm-review-row" id="revRow-13">
+                <div class="crr-meta">
+                    <strong>Олександр Ковальчук</strong>
+                    <span class="crr-stars">5★</span>
+                    <small class="crr-date">17.11.2026 18:50 &middot; Google Reviews</small>
+                </div>
+                <p class="crr-text">Найатмосферніше місце в Тернополі без перебільшення! Неймовірний інтерʼєр у старовинному підвалі, дуже смачні суші (сет Роял просто космос) і професійні бармени. Окремий респект за музику.</p>
+                <div class="crr-actions">
+                    <button type="button" class="btn-sm-action" onclick="toggleReview(13, 'toggle')">
+                        🟢 Опубліковано
+                    </button>
+                    <button type="button" class="btn-sm-action btn-act-cancel" onclick="toggleReview(13, 'delete')">
+                        Видалити 🗑️
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- Modal: New Dish Creator -->
+<div class="crm-modal-backdrop" id="newDishModalBackdrop" onclick="closeNewDishModal()"></div>
+<div class="crm-modal" id="newDishModal">
+    <div class="crm-modal-content">
+        <button class="crm-modal-close" onclick="closeNewDishModal()">&times;</button>
+        <h3>Додати нову позицію в меню</h3>
+        <p class="text-muted">Страва одразу з'явиться в меню на сайті та в доставці</p>
+
+        <form id="newDishForm" onsubmit="submitNewDish(event)">
+            <input type="hidden" name="csrfmiddlewaretoken" value="Mxsti43trDxsvDW5ENkyJqaIfLTTX6GGXEt1BVszDGj6nOHTVak1CbdtKeNsIXug">
+            <div class="form-group">
+                <label>Категорія меню *</label>
+                <select id="dishCat" class="form-control" required>
+                    
+                    <option value="34">🍱 Сет-меню Суші</option>
+                    
+                    <option value="35">🍣 Роли та Суші</option>
+                    
+                    <option value="36">🍔 Бургери</option>
+                    
+                    <option value="37">🍝 Паста</option>
+                    
+                    <option value="38">🥩 Основні страви</option>
+                    
+                    <option value="39">🥗 Салати</option>
+                    
+                    <option value="40">🧀 Холодні закуски</option>
+                    
+                    <option value="41">🍟 Гарячі закуски</option>
+                    
+                    <option value="42">🍸 Коктейлі &amp; Бар</option>
+                    
+                    <option value="43">💨 Кальяни</option>
+                    
+                    <option value="44">🍰 Десерти</option>
+                    
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Назва страви *</label>
+                <input type="text" id="dishTitle" class="form-control" placeholder="Філадельфія з трюфелем" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-half">
+                    <label>Ціна (грн) *</label>
+                    <input type="number" id="dishPrice" class="form-control" placeholder="420" required min="1">
+                </div>
+                <div class="form-group col-half">
+                    <label>Вага / об'єм</label>
+                    <input type="text" id="dishWeight" class="form-control" placeholder="320 г">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Опис та інгредієнти</label>
+                <textarea id="dishDesc" class="form-control" rows="2" placeholder="Рис, норі, лосось, трюфельний соус..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Посилання на фото (URL)</label>
+                <input type="url" id="dishImage" class="form-control" placeholder="https://cdn-media... / https://images.unsplash...">
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="dishIsPopular">
+                    <span>Позначити як хіт закладу (ХІТ)</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-gold btn-block" id="btnSubmitNewDish">
+                Зберегти страву в меню
+            </button>
+        </form>
+    </div>
+</div>
+
+    </main>
+
+    <!-- Audio ding element using Web Audio API in crm.js -->
+    <div id="crmToastContainer" class="crm-toast-container"></div>
+
+    <script src="assets/js/crm.js?v=2.2"></script>
+    
+</body>
+</html>
