@@ -4,9 +4,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('favicon.ico', RedirectView.as_view(url='https://cdn-media.choiceqr.com/prod-eat-bunkermuz332/logo/thumbnail_wuSVP-BDSTy-MclbO.jpeg', permanent=False)),
     path('', include('main.urls')),
 ]
 
